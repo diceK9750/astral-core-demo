@@ -17,6 +17,7 @@
 <label for="viewport">表示領域<select id="viewport">
 <option value="375,812">375 × 812 · compact phone</option>
 <option value="390,844" selected>390 × 844 · phone</option>
+<option value="390,660">390 × 660 · visible URL bar</option>
 <option value="430,932">430 × 932 · large phone</option>
 <option value="320,568">320 × 568 · small phone</option>
 <option value="844,390">844 × 390 · landscape</option>
@@ -55,17 +56,29 @@ function setViewport(){
  [width,height]=$('viewport').value.split(',').map(Number);
  frame.width=width;frame.height=height;frame.style.width=width+'px';frame.style.height=height+'px';
  fit();
- if(loaded)requestAnimationFrame(()=>requestAnimationFrame(run));
+ if(loaded){const waiting=frame.contentDocument.getElementById('app')?.classList.contains('loading');setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(run)),waiting?500:0);}
 }
 function fit(){
  const available=Math.max(1,document.querySelector('.preview-area').clientWidth-24),scale=Math.min(1,available/width);
  frame.style.transform='scale('+scale+')';wrap.style.width=width*scale+'px';wrap.style.height=height*scale+'px';
  $('readout').textContent=width+' × '+height+' CSS px · 表示倍率 '+Math.round(scale*100)+'%';
 }
-function visible(el){if(!el)return false;const s=frame.contentWindow.getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity)!==0&&r.width>0&&r.height>0;}
+function visible(el){if(!el)return false;const r=el.getBoundingClientRect();if(r.width<=0||r.height<=0)return false;for(let current=el;current&&current.nodeType===1;current=current.parentElement){const s=frame.contentWindow.getComputedStyle(current);if(s.display==='none'||s.visibility==='hidden'||Number(s.opacity)===0)return false;}return true;}
 function label(el){return el.id?'#'+el.id:'.'+Array.from(el.classList).join('.');}
 function rectangle(el){const r=el.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom};}
 function overlap(a,b){return Math.min(a.right,b.right)-Math.max(a.x,b.x)>2&&Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y)>2;}
+// Measure rendered text fragments, not the full-width boxes around centered copy.
+function textRectangles(el){
+ if(!visible(el))return[];
+ const doc=el.ownerDocument,walker=doc.createTreeWalker(el,4),rects=[];let node;
+ while((node=walker.nextNode())){
+  if(!node.nodeValue.trim()||!visible(node.parentElement))continue;
+  const first=node.nodeValue.search(/\S/),last=node.nodeValue.search(/\s*$/),range=doc.createRange();
+  range.setStart(node,first);range.setEnd(node,last);
+  for(const r of range.getClientRects())if(r.width>0&&r.height>0)rects.push({x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom});
+ }
+ return rects;
+}
 function check(ok,title,detail,warning=false){return{state:ok?'pass':warning?'warn':'fail',title,detail};}
 function render(checks){
  const target=$('checks');target.replaceChildren();
@@ -79,20 +92,25 @@ function measure(){
  if(!loaded){$('performance').textContent='先にデモの読み込みを完了してください。';return;}
  cancelMeasurement();
  const win=frame.contentWindow,doc=frame.contentDocument,mode=()=>doc.getElementById('overdrive').getAttribute('aria-pressed')==='true'?'OVERDRIVE':'NORMAL',initialMode=mode(),initialSize=width+' × '+height;
- let request=0,observer=null,start=null,previous=null,finished=false,longTasks=0,longDuration=0,monitoring=false;
+ let request=0,observer=null,start=null,previous=null,finished=false,longTasks=0,longDuration=0,monitoring=false,callbacks=0;
  const intervals=[];
+ const startedAt=performance.now(),visibility=()=>'visibility: page '+document.visibilityState+' / iframe '+doc.visibilityState;
  const longTaskSupported=!!(win.PerformanceObserver&&win.PerformanceObserver.supportedEntryTypes&&win.PerformanceObserver.supportedEntryTypes.includes('longtask'));
  if(longTaskSupported){try{observer=new win.PerformanceObserver(list=>{if(monitoring)for(const entry of list.getEntries()){longTasks++;longDuration+=entry.duration;}});observer.observe({entryTypes:['longtask']});}catch(_){observer=null;}}
- $('measure').disabled=true;$('performance').textContent=initialSize+' / '+initialMode+' — 1 秒準備 → 180 フレーム計測中…';
- const deadline=setTimeout(()=>finish('25 秒以内にサンプルが集まりませんでした。タブとデモを表示して再計測してください。'),25000);
+ $('measure').disabled=true;
+ function progress(){if(!finished)$('performance').textContent=initialSize+' / '+initialMode+' — '+(monitoring?'計測中':'1 秒準備中')+' · '+intervals.length+' / 180 intervals · rAF '+callbacks+' callbacks · 経過 '+((performance.now()-startedAt)/1000).toFixed(1)+' s · '+visibility();}
+ progress();const progressTimer=setInterval(progress,1000);
+ const deadline=setTimeout(()=>finish('25 秒で終了。目標サンプル未達の参考値です。ブラウザの描画抑制・非表示状態を含む可能性があります。'),25000);
  function finish(message){
-  if(finished)return;finished=true;win.cancelAnimationFrame(request);clearTimeout(deadline);if(observer){if(monitoring)for(const entry of observer.takeRecords()){longTasks++;longDuration+=entry.duration;}observer.disconnect();}$('measure').disabled=false;
-  if(message){$('performance').textContent=message;return;}
-  const sorted=intervals.slice().sort((a,b)=>a-b),median=sorted[Math.floor(sorted.length*.5)],p95=sorted[Math.ceil(sorted.length*.95)-1],mean=intervals.reduce((a,b)=>a+b,0)/intervals.length,finalMode=mode();
-  $('performance').textContent=initialSize+' / '+initialMode+(finalMode!==initialMode?' → '+finalMode:'')+' · '+intervals.length+' intervals · 中央値 '+median.toFixed(2)+' ms · p95 '+p95.toFixed(2)+' ms · 平均間隔から約 '+(1000/mean).toFixed(1)+' Hz · '+(observer?'Long tasks '+longTasks+' 件 / '+longDuration.toFixed(1)+' ms':'Long Task API 利用不可')+'（この検証環境のみ）';
+  if(finished)return;finished=true;win.cancelAnimationFrame(request);clearTimeout(deadline);clearInterval(progressTimer);if(observer){if(monitoring)for(const entry of observer.takeRecords()){longTasks++;longDuration+=entry.duration;}observer.disconnect();}$('measure').disabled=false;
+  let statistics='有効なフレーム間隔なし。中央値・p95・Hz は算出できません。';
+  if(intervals.length){const sorted=intervals.slice().sort((a,b)=>a-b),median=sorted[Math.floor(sorted.length*.5)],p95=sorted[Math.ceil(sorted.length*.95)-1],mean=intervals.reduce((a,b)=>a+b,0)/intervals.length;statistics='中央値 '+median.toFixed(2)+' ms · p95 '+p95.toFixed(2)+' ms · 平均間隔から約 '+(1000/mean).toFixed(1)+' Hz';}
+  const finalMode=mode();
+  $('performance').textContent=(message?message+' ':'')+initialSize+' / '+initialMode+(finalMode!==initialMode?' → '+finalMode:'')+' · '+intervals.length+' / 180 intervals'+(intervals.length<180?'（サンプル不足）':'')+' · rAF '+callbacks+' callbacks · 経過 '+((performance.now()-startedAt)/1000).toFixed(1)+' s · '+statistics+' · '+(observer?'Long tasks '+longTasks+' 件 / '+longDuration.toFixed(1)+' ms':'Long Task API 利用不可')+' · '+visibility()+'（この検証環境の rAF 観測値。端末実機 FPS ではありません）';
  }
  cancelMeasurement=()=>finish('ビューポート変更または再読み込みにより計測を中止しました。');
  function sample(now){
+  callbacks++;
   if(start===null)start=now;
   if(now-start>=1000){monitoring=true;if(previous!==null&&now>previous)intervals.push(now-previous);previous=now;}
   if(intervals.length>=180){finish();return;}
@@ -128,8 +146,17 @@ function run(){
  checks.push(check(colliding.length===0,'主要ボタン同士の重なり',colliding.length?colliding.join(', '):'検出なし'));
  if(!introActive){
   const areas=['.topbar','.dock','.stage-label'].map(s=>doc.querySelector(s)).filter(visible),core=doc.getElementById('coreTarget'),obstructions=core&&visible(core)?areas.filter(el=>!el.contains(core)&&overlap(rectangle(el),rectangle(core))).map(label):[];
-  checks.push(check(obstructions.length===0,'コア領域と HUD の重なり',obstructions.length?obstructions.join(', ')+'（意図した配置か目視確認）':'検出なし',true));
+ checks.push(check(obstructions.length===0,'コア領域と HUD の重なり',obstructions.length?obstructions.join(', ')+'（意図した配置か目視確認）':'検出なし',true));
  }
+ for(const [left,right,title]of[['.core-caption','#intro','コア状態と見出しの文字重なり'],['.stage-label','.event','上部ラベルと演出タイトルの文字重なり']]){
+  const a=textRectangles(doc.querySelector(left)),b=textRectangles(doc.querySelector(right)),collides=a.some(ar=>b.some(br=>overlap(ar,br)));
+  checks.push(check(!collides,title,collides?left+' / '+right+' の文字領域が重なっています':a.length&&b.length?'表示中の文字領域に重なりなし':'片方が非表示のため重なりなし'));
+ }
+ const textOverflow=[];
+ for(const el of doc.querySelectorAll('.topbar,.stage-label,.core-caption,#intro,.event,.dock,.side,.keyhint')){
+  if(textRectangles(el).some(r=>r.x < -1||r.y < -1||r.right>width+1||r.bottom>height+1))textOverflow.push(label(el));
+ }
+ checks.push(check(textOverflow.length===0,'表示テキストの画面内配置',textOverflow.length?textOverflow.join(', ')+' に画面外の文字領域あり':'表示中の HUD・説明・操作テキストは画面内'));
  const badText=doc.body.innerText.match(/\b(?:NaN|Infinity|undefined)\b/g)||[];
  checks.push(check(badText.length===0,'数値・表示の異常',badText.length?badText.join(', '):'NaN / Infinity / undefined なし'));
  checks.push(check(errors.length===0,'監視開始後の未処理例外',errors.length?errors.length+' 件（下記ログ）':'0 件。起動時と Console は別途検証'));
