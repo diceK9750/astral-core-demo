@@ -51,12 +51,14 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id),frame=$('demo'),wrap=$('frameWrap');
-let width=390,height=844,loaded=false,errors=[],unlisten=()=>{},cancelMeasurement=()=>{};
+let width=390,height=844,loaded=false,errors=[],unlisten=()=>{},cancelMeasurement=()=>{},layoutTimer=0,layoutDeadline=0;
+function clearLayoutWait(){clearTimeout(layoutTimer);layoutTimer=0;layoutDeadline=0;}
 function setViewport(){
+ clearLayoutWait();
  [width,height]=$('viewport').value.split(',').map(Number);
  frame.width=width;frame.height=height;frame.style.width=width+'px';frame.style.height=height+'px';
  fit();
- if(loaded){const waiting=frame.contentDocument.getElementById('app')?.classList.contains('loading');setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(run)),waiting?500:0);}
+ if(loaded)layoutTimer=setTimeout(()=>{layoutTimer=0;run();},100);
 }
 function fit(){
  const available=Math.max(1,document.querySelector('.preview-area').clientWidth-24),scale=Math.min(1,available/width);
@@ -126,9 +128,19 @@ function monitor(){
  unlisten=()=>{win.removeEventListener('error',onError);win.removeEventListener('unhandledrejection',onReject);};showErrors();
 }
 function run(){
- if(!loaded){$('summary').textContent='読み込み完了を待っています。';return;}
+ if(!loaded){clearLayoutWait();$('summary').textContent='読み込み完了を待っています。';return;}
  try{
- const win=frame.contentWindow,doc=frame.contentDocument,checks=[],introActive=visible(doc.getElementById('connect'));
+ const win=frame.contentWindow,doc=frame.contentDocument,demoApp=doc.getElementById('app');
+ if(demoApp&&demoApp.classList.contains('loading')){
+  if(!layoutDeadline)layoutDeadline=performance.now()+10000;
+  $('checks').replaceChildren();$('timestamp').textContent='';$('phase').textContent='現在：起動演出待ち。接続状態・配置の合否はまだ判定していません。';
+  if(performance.now()>=layoutDeadline){clearLayoutWait();$('summary').textContent='10 秒以内に起動描画の準備が整いませんでした。描画が進んでから Run checks を再実行してください。検査は未完了です。';return;}
+  $('summary').textContent='起動描画を待っています…（最大 10 秒）';
+  if(!layoutTimer)layoutTimer=setTimeout(()=>{layoutTimer=0;run();},100);
+  return;
+ }
+ clearLayoutWait();
+ const checks=[],introActive=demoApp?!demoApp.classList.contains('connected'):!doc.getElementById('connect')?.hidden;
  $('phase').textContent=introActive?'現在：接続前。デモを操作して、接続後も再検査してください。':'現在：デモ画面。長押し・NOVA・OVERDRIVE は下の画面で操作できます。';
  checks.push(check(win.innerWidth===width&&win.innerHeight===height,'内部ビューポート',win.innerWidth+' × '+win.innerHeight+' px / 指定 '+width+' × '+height+' px'));
  const sw=Math.max(doc.documentElement.scrollWidth,doc.body.scrollWidth),sh=Math.max(doc.documentElement.scrollHeight,doc.body.scrollHeight);
@@ -161,10 +173,10 @@ function run(){
  checks.push(check(badText.length===0,'数値・表示の異常',badText.length?badText.join(', '):'NaN / Infinity / undefined なし'));
  checks.push(check(errors.length===0,'監視開始後の未処理例外',errors.length?errors.length+' 件（下記ログ）':'0 件。起動時と Console は別途検証'));
  render(checks);
- }catch(e){$('summary').textContent='検査できません：'+e.message;}
+ }catch(e){clearLayoutWait();$('summary').textContent='検査できません：'+e.message;}
 }
 frame.addEventListener('load',()=>{loaded=true;errors=[];try{monitor();setViewport();}catch(e){$('summary').textContent='同一オリジンで開いてください：'+e.message;}});
-$('viewport').addEventListener('change',()=>{cancelMeasurement();setViewport();});$('run').addEventListener('click',run);$('measure').addEventListener('click',measure);$('reload').addEventListener('click',()=>{cancelMeasurement();loaded=false;errors=[];$('summary').textContent='再読み込み中…';frame.src='../index.html?qa='+Date.now();});
+$('viewport').addEventListener('change',()=>{cancelMeasurement();setViewport();});$('run').addEventListener('click',run);$('measure').addEventListener('click',measure);$('reload').addEventListener('click',()=>{cancelMeasurement();clearLayoutWait();loaded=false;errors=[];$('summary').textContent='再読み込み中…';frame.src='../index.html?qa='+Date.now();});
 window.addEventListener('resize',fit,{passive:true});setViewport();
 })();
 </script>
