@@ -1,4 +1,4 @@
-# ASTRAL CORE / REMOTE CHALLENGE
+# ASTRAL CORE / REMOTE GHOST DUEL
 60秒で未来のコアと同期する、光・音・タッチのミニゲーム。
 公開: https://dicek9750.github.io/astral-core-demo/
 ## 遊び方
@@ -36,6 +36,7 @@ node tests/check-source.cjs
 node tests/game.cjs
 node tests/interaction.cjs
 node tests/challenge.cjs
+node tests/ghost.cjs
 python3 -m http.server 8000
 ```
 ゲームのルール検査は出荷するモデルを直接抽出して実行します。操作検査はDOM・Canvas・Web Audioのモックで、タイマー、操作、音声開始制限、中断復帰、再挑戦、保存失敗を確認します。
@@ -62,3 +63,29 @@ Seedは8桁のASCII英数字、大文字へ正規化。重複・不正Seed、2,0
 共有: Web Share → Clipboard API → 選択可能なURL欄。ネイティブ共有のキャンセルは何も送らず終了。ブラウザ制限で共有／コピーが失敗しても手動コピー可能です。
 Daily: CHALLENGEを選ぶと小さなDAILY / JSTボタンが表示されます。JSTの暦日（0時切替）から決定したSeedで、そのプレイ中は日付が変わっても固定。共有先も同じSeedです。端末時計が誤っている場合はDaily選択日もずれます。
 テスト: `tests/challenge.cjs` は200Seedの公平な配分、決定性、各干渉の応答・タイムスタンプ境界、URL安全性、Daily境界、結果・共有フォールバック・保存例外を検査。`tests/preview.html` のモード切替で公開Challengeも実時間60秒の操作シナリオと全寸法検査が可能です。
+
+## REMOTE GHOST DUEL / G1
+非同期のゴースト対戦です。サーバー通信、オンライン相手の現在地・接続状態、実際のAI解析を表すものではありません。Challenge／Dailyを60秒プレイ → GHOST CHALLENGE → URLを友人へ送る → 同じSeedの記録と対戦 → SEND REMATCHで自分の新しい記録を送り返す、という往復ができます。通常モード・SeedだけのChallenge共有は維持しています。結果のSEED ONLYから従来のURLを共有できます。
+
+### 記録・URL形式
+`?challenge=8桁Seed&rules=R1&gver=1&ghost=Base64URL`
+0秒の初期値＋1〜60秒の61サンプルを記録し、0秒は省略してバイナリ化。全入力イベントやJSONは格納しません。
+- ヘッダー23 bytes: magic・format version、Seedの8 ASCII bytes（完全一致検証）、最終SCORE uint32、最終SYNC 0.1%単位uint16、CLASS uint8、MAX COMBO uint8、NOVA COUNT uint8、CORE ID 4 bytes。多バイト整数はbig endian。
+- 各秒: SCOREを10点単位へ量子化し、前秒との差をZigZag＋7bit可変長整数に変換。SYNCは整数%、COMBOは0〜255、flagsはOVERDRIVE継続／SINGULARITY／その秒のNOVA／OVERDRIVE開始。それぞれ1 byte。
+- 末尾4 bytes: FNV-1aチェックサム。破損検出であり、認証・不正防止ではありません。
+- 途中の得点誤差は最大5点、SYNCは最大0.5%。最後の得点・SYNC・CLASSは丸める前の値を別保存。最終勝敗に量子化誤差は入りません。
+- 名前、個人情報、端末ID、IP、ブラウザ情報、暦時刻は含みません。CORE IDは成績だけから生成する既存IDです。
+- デコード前にquery・payload長を制限し、文字種、余剰ビット、バイト長、version、Seed、checksum、整数上限、各サンプル・最終値・イベント数の整合を確認。未知形式・壊れた記録はGhostなしのChallengeへ戻し、query全体が過大・Challenge Seedも無効ならNORMALへ戻します。
+- 有効スコアは0〜60000、サンプル間の変動は2500点以下を許容。これはデータ破損への防御であり、改ざんした成績の真正性を保証しません。
+
+### 再生・対戦
+時刻から配列のindexを直接計算し、隣り合う1秒サンプルを補間。相手の途中スコアは再現用の近似値で、入力そのものの再現ではありません。NOVA・OVERDRIVE・SINGULARITYは1秒単位の残響として各1回再生。非表示／ポーズ中は自分と相手の時間が一緒に止まり、再挑戦で両方0秒へ戻ります。
+HUDをTIME／YOU／RIVAL／DELTAへ置換し、中央COREの面積を維持。相手はアンバー色の点線リング、UNKNOWN SIGNALは赤紫として区別します。差が25点未満はNECK AND NECK、相手先行から自分先行へ変わるとOVERTAKE。追い抜き演出のcooldownは4秒。相手の重要イベントは短い文字とリング残響で表示します。
+60秒後は厳密な最終得点の大小からVICTORY／DEFEAT／DRAWを決定。両者のSCORE・CLASS、DELTA、相手のSYNC／MAX COMBO、元の自分の各結果を表示。採点ロジックはR1のままで、Ghostが採点やSeedイベントを変更することはありません。
+SEND REMATCHは古いGhostをURLへ継ぎ足さず、自分の最新記録1本へ置換。同じSeedで何往復してもURLが伸び続けません。Web Share→Clipboard→選択可能URLの順にフォールバックし、共有シートのキャンセルは静かに終了します。
+Daily自体は維持し、その結果もGhost化できます。自動保存のDaily自己ベストGhost再戦は未追加です。
+
+### Ghost検証
+`tests/ghost.cjs` はバイナリ往復、量子化、最終得点の完全保存、URL長、破損・未知version・Seed不一致・巨大値、時計と重要イベント、追い抜きcooldown、3種類の勝敗、Rematch、共有フォールバック、既存モードを検証します。
+ブラウザQAには「タップ中心の記録」「結果のGhost URLを取得」「記録を別ページで対戦」を追加。実時間60秒のChallengeから実際の共有URLを生成し、そのURLだけでページを作り直して混合操作で対戦できます。3秒の出遅れを入れ、相手先行→追い抜きを観測します。合成ポインターの検証であり、実機タッチ・音質・振動・ネイティブ共有シートの確認は別です。
+配列は各記録61サンプル、再生の通常更新はO(1)、低頻度フレームで飛ばした重要イベントの処理も最大60回。相手の描画は固定数の円弧のみ。既存のDPR上限・描画キャッシュ・軽量化・エフェクト数制限を維持しています。
