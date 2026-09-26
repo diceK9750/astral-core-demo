@@ -23,10 +23,11 @@
 <option value="844,390">844 × 390 · landscape</option>
 <option value="1920,1080">1920 × 1080 · desktop</option>
 </select></label>
-<label for="testMode">モード<select id="testMode"><option value="normal">NORMAL</option><option value="challenge">CHALLENGE A7F291C8</option></select></label><button type="button" class="primary" id="run">Run checks</button>
+<label for="testMode">モード<select id="testMode"><option value="normal">NORMAL</option><option value="challenge">CHALLENGE A7F291C8</option><option value="ghost">CAPTURED GHOST</option></select></label><button type="button" class="primary" id="run">Run checks</button>
 <button type="button" id="measure">180 frames を計測</button>
-<button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">上級操作を60秒検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="reload">起動からやり直す</button>
+<label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">上級操作を60秒検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="reload">起動からやり直す</button>
 </div>
+<div class="controls"><button type="button" id="captureGhost">結果のGhost URLを取得</button><button type="button" id="openGhost">記録を別ページで対戦</button><label style="flex:1;min-width:250px">Ghost URL<input id="ghostLink" type="url" style="width:100%;min-height:44px;background:#111b2b;color:#cae7ff;border:1px solid #40506a;padding:10px"></label><span id="ghostReadout" class="summary"></span></div>
 <div class="layout">
 <section class="preview-area" aria-label="デモの表示領域">
 <div id="readout" class="viewport-readout"></div>
@@ -147,7 +148,7 @@ function run(){
  checks.push(check(sw<=width+1&&sh<=height+1,'ページのはみ出し',sw+' × '+sh+' px / 表示領域 '+width+' × '+height+' px'));
  const canvas=doc.getElementById('scene'),cr=canvas&&rectangle(canvas);
  checks.push(check(!!canvas&&canvas.width>0&&canvas.height>0&&cr.width>=width-1&&cr.height>=height-1,'Canvas の描画領域',canvas?canvas.width+' × '+canvas.height+' bitmap px / CSS '+Math.round(cr.width)+' × '+Math.round(cr.height):'#scene が見つかりません'));
- const resultOpen=visible(doc.getElementById('result')),pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect','#shareChallenge','#backMode']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound','#normalMode','#challengeMode',...(!doc.getElementById('remoteInfo').hidden?['#dailyMode']:[])]:['#coreTarget','#overdrive','#sound'];
+ const resultOpen=visible(doc.getElementById('result')),pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect','#shareChallenge',...(!doc.getElementById('shareSeedOnly').hidden?['#shareSeedOnly']:[]),'#backMode']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound',...(!demoApp.classList.contains('duel')?['#normalMode','#challengeMode',...(!doc.getElementById('remoteInfo').hidden?['#dailyMode']:[])]:[])]:['#coreTarget','#overdrive','#sound'];
  const controls=selectors.map(s=>doc.querySelector(s)).filter(visible),missing=selectors.filter(s=>!visible(doc.querySelector(s)));
  checks.push(check(missing.length===0,'主要操作の表示',missing.length?'非表示または未検出：'+missing.join(', '):selectors.join(', ')));
  const escaped=controls.filter(el=>{const r=rectangle(el);return r.x < -1||r.y < -1||r.right>width+1||r.bottom>height+1;});
@@ -187,21 +188,23 @@ function focusGame(){frame.contentWindow.focus();const doc=frame.contentDocument
 $('hold').addEventListener('click',async()=>{focusGame();await holdTest();run();});$('novaTest').addEventListener('click',async()=>{focusGame();await novaTest();run();});
 $('play').addEventListener('click',async()=>{
  $('play').disabled=true;const doc=frame.contentDocument;focusGame();if(visible(doc.getElementById('result')))doc.getElementById('reconnect').click();else if(visible(doc.getElementById('connect')))doc.getElementById('connect').click();
- const start=performance.now();let cycles=0;const remote=doc.getElementById('app').classList.contains('remote');
+ const start=performance.now();let cycles=0,overtakes=0,lastLead='';const duel=doc.getElementById('app').classList.contains('duel'),casual=$('pilot').value==='casual';const watch=new MutationObserver(()=>{const lead=doc.getElementById('stageMode').textContent;if(lead==='OVERTAKE'&&lastLead!==lead)overtakes++;lastLead=lead;});watch.observe(doc.getElementById('stageMode'),{childList:true,subtree:true,characterData:true});if(duel)await delay(3000);const remote=doc.getElementById('app').classList.contains('remote');
  try{while(performance.now()-start<90000&&!visible(doc.getElementById('result'))){
  if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();
- if(remote){const banner=doc.getElementById('signalBanner'),kind=doc.getElementById('signalType').textContent;
+ if(casual){await tapTest();await delay(570);}else if(remote){const banner=doc.getElementById('signalBanner'),kind=doc.getElementById('signalType').textContent;
  if(visible(banner)&&!banner.classList.contains('solved')){if(kind.includes('VOID'))await delay(220);else if(kind.includes('PHASE SHIFT')){await holdTest();await delay(360);}else if(kind.includes('OVERLOAD')){if(doc.getElementById('coreStatus').textContent==='NOVA READY'){await novaTest();await delay(370);}else await delay(200);}else if(kind.includes('JAM')){await tapTest();await delay(550);}else if(kind.includes('PULSE')){if(banner.classList.contains('beat')){await tapTest();await delay(400);}else await delay(40);}}
  else {const action=cycles%4;if(action===2)await holdTest();else if(action===3)await novaTest();else await tapTest();await delay(action===2?370:550);}
  }else{await tapTest();await delay(530);await tapTest();await delay(530);await holdTest();await delay(370);await novaTest();await delay(600);}
  const drive=doc.getElementById('overdrive');if(!drive.disabled&&!drive.hidden)drive.click();cycles++;
- $('runLog').textContent='実ブラウザ／合成ポインター検証中 '+((performance.now()-start)/1000).toFixed(1)+'s / '+cycles+' cycles\nTIME '+doc.getElementById('timeValue').textContent+' / SYNC '+doc.getElementById('syncValue').textContent+' / COMBO '+doc.getElementById('comboValue').textContent;
+ $('runLog').textContent='実ブラウザ／合成ポインター検証中 '+((performance.now()-start)/1000).toFixed(1)+'s / '+cycles+' cycles\nTIME '+doc.getElementById('timeValue').textContent+' / SYNC '+doc.getElementById('syncValue').textContent+' / COMBO '+doc.getElementById('comboValue').textContent+(duel?' / RIVAL '+doc.getElementById('rivalScore').textContent+' / DELTA '+doc.getElementById('duelDelta').textContent+' / OVERTAKES '+overtakes:'');
  }
- await delay(1200);run();$('runLog').textContent='60秒シナリオ完了（合成ポインター。実機ではありません）\n'+doc.getElementById('resultRank').textContent+' / '+doc.getElementById('resultName').textContent+' / SYNC '+doc.getElementById('resultSync').textContent+'%\nMAX COMBO '+doc.getElementById('resultCombo').textContent+' / NOVA '+doc.getElementById('resultNova').textContent+' / '+doc.getElementById('resultDrive').textContent+'\nSCORE '+doc.getElementById('resultScore').textContent+' / '+doc.getElementById('resultDelta').textContent+'\nRESULT visible: '+visible(doc.getElementById('result'))+' / errors: '+errors.length;
- }catch(e){$('runLog').textContent='FAIL: '+e.stack;}finally{$('play').disabled=false;}
+ await delay(1200);run();$('runLog').textContent='60秒シナリオ完了（合成ポインター。実機ではありません）\n'+doc.getElementById('resultRank').textContent+' / '+doc.getElementById('resultName').textContent+' / SYNC '+doc.getElementById('resultSync').textContent+'%\nMAX COMBO '+doc.getElementById('resultCombo').textContent+' / NOVA '+doc.getElementById('resultNova').textContent+' / '+doc.getElementById('resultDrive').textContent+'\nSCORE '+doc.getElementById('resultScore').textContent+' / '+doc.getElementById('resultDelta').textContent+(duel?'\n'+doc.getElementById('duelOutcome').textContent+' / '+doc.getElementById('duelFinalDelta').textContent+' / OVERTAKES '+overtakes:'')+'\nRESULT visible: '+visible(doc.getElementById('result'))+' / errors: '+errors.length;
+ }catch(e){$('runLog').textContent='FAIL: '+e.stack;}finally{watch.disconnect();$('play').disabled=false;}
 });
-$('viewport').addEventListener('change',()=>{cancelMeasurement();setViewport();});$('run').addEventListener('click',run);$('measure').addEventListener('click',measure);$('reload').addEventListener('click',()=>{cancelMeasurement();clearLayoutWait();loaded=false;errors=[];$('summary').textContent='再読み込み中…';frame.src='../index.html?qa='+Date.now()+($('testMode').value==='challenge'?'&challenge=A7F291C8':'');});
+$('viewport').addEventListener('change',()=>{cancelMeasurement();setViewport();});$('run').addEventListener('click',run);$('measure').addEventListener('click',measure);$('reload').addEventListener('click',()=>{cancelMeasurement();clearLayoutWait();loaded=false;errors=[];$('summary').textContent='再読み込み中…';frame.src=$('testMode').value==='ghost'&&$('ghostLink').value?$('ghostLink').value:'../index.html?qa='+Date.now()+($('testMode').value==='challenge'?'&challenge=A7F291C8':'');});
 $('testMode').addEventListener('change',()=>{$('reload').click();});
+$('captureGhost').addEventListener('click',()=>{const doc=frame.contentDocument;if(!visible(doc.getElementById('result'))){$('ghostReadout').textContent='先にChallengeを60秒プレイしてください。';return;}doc.getElementById('shareChallenge').click();const url=doc.getElementById('shareUrl').value;if(!url.includes('ghost=')){$('ghostReadout').textContent='Ghost未生成。Challenge結果から取得してください。';return;}$('ghostLink').value=url;$('ghostReadout').textContent=url.length+'文字 / 実プレイの記録';});
+$('openGhost').addEventListener('click',()=>{try{const url=new URL($('ghostLink').value);if(url.origin!==location.origin||!url.searchParams.has('ghost')||url.href.length>=1000)throw Error('Invalid URL');$('testMode').value='ghost';$('pilot').value='full';$('reload').click();$('ghostReadout').textContent='新しいページ状態で記録を読み込み中。';}catch(_){$('ghostReadout').textContent='有効な公開Ghost URLを入力してください。';}});
 window.addEventListener('resize',fit,{passive:true});setViewport();
 })();
 </script>
