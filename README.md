@@ -1,4 +1,4 @@
-# ASTRAL CORE / NEURAL SYNC TEST
+# ASTRAL CORE / REMOTE CHALLENGE
 60秒で未来のコアと同期する、光・音・タッチのミニゲーム。
 公開: https://dicek9750.github.io/astral-core-demo/
 ## 遊び方
@@ -35,7 +35,30 @@ SINGULARITYは40秒経過後、OVERDRIVE中にSYNC 88%以上・現在COMBO 18以
 node tests/check-source.cjs
 node tests/game.cjs
 node tests/interaction.cjs
+node tests/challenge.cjs
 python3 -m http.server 8000
 ```
 ゲームのルール検査は出荷するモデルを直接抽出して実行します。操作検査はDOM・Canvas・Web Audioのモックで、タイマー、操作、音声開始制限、中断復帰、再挑戦、保存失敗を確認します。
 ブラウザQA: `/tests/preview.html`。320×568、375×812、390×844、430×932、390×660、844×390、1920×1080の実CSS領域で、ボタン・文字・重なり・オーバーフローを検査。「上級操作を60秒検証」は実ブラウザ内の合成PointerEventで実時間のゲームを操作します。画面寸法の検査・合成入力は端末実機のタッチ、Safari、音質、振動、safe-area、FPSの保証を代替しません。
+
+## REMOTE CHALLENGE / R1
+起動時のNORMAL TEST / CHALLENGEで切替。Challenge URLでは自動でCHALLENGEを選択します。コアに触れて60秒開始。結果から同じSeedを共有し、友人とSCOREを比較できます。通常結果の「CREATE A CHALLENGE」は、新しい共通条件での60秒プレイを開始します（通常の結果をChallenge結果として扱いません）。
+例: https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R1
+
+Seedは8桁のASCII英数字、大文字へ正規化。重複・不正Seed、2,048文字を超えるqueryは通常モードに安全に戻します。crypto.getRandomValues優先、非対応時だけMath.randomで新規Seedを生成。個人・端末情報は使いません。FNV-1a + Mulberry32でイベント順とPULSEの位相を決定し、演出粒子の乱数とゲーム条件を分離。共有URLは余計なquery/hashを除きます。R1はこのルール版の識別子です。
+全Seedは8秒から5種×2回、1イベント3.2秒、同じスロット時刻・最大+1000点です。順序は前半／後半でそれぞれシャッフル。警告・赤紫の軌道／異常波形・短い操作指示が出現し、排除するとシアンに押し返します。
+
+| UNKNOWN SIGNAL | 対応 |
+| --- | --- |
+| PULSE | 光る合図の±0.24秒以内にタップ。1.1秒周期 |
+| JAM | 0.48秒以上離してタップ2回。連打は減点 |
+| PHASE SHIFT | 0.9〜1.55秒の成功チャージ |
+| OVERLOAD | NOVA。通常の3.2秒クールダウンを維持 |
+| VOID | 3.2秒触れずに待つ。無入力ならコンボ待機時間を保護。跨いだ長押しも接触扱い |
+
+対応成功は各+100点。誤入力は-10点（VOID接触は-30）、未達成終了時は合計-30点まで。各イベントの損失上限-30。排除後は通常入力に戻れます。SCORE = max(0, round(通常得点 + 干渉対応点))。SYNC・ランク・SINGULARITYは通常得点だけで判定し、干渉ボーナスでランクを水増ししません。SCOREは同一Seed・同一ルール版で比較してください。各Seedのボーナス上限とイベント数は等しいですが、順序と個人の操作習熟によって実得点は異なります。
+
+結果: NEURAL CLASS、SYNC、SCORE、MAX COMBO、NOVA、OVERDRIVE、SINGULARITY、Challenge ID、CORE ID、同一Seedの自己ベストとの差、排除数。Challengeのベストは通常BESTと独立し、localStorageに直近24Seedまで保存。保存不可でも動作します。認証やサーバー検証がないため競技用の不正防止・ランキングはありません。
+共有: Web Share → Clipboard API → 選択可能なURL欄。ネイティブ共有のキャンセルは何も送らず終了。ブラウザ制限で共有／コピーが失敗しても手動コピー可能です。
+Daily: CHALLENGEを選ぶと小さなDAILY / JSTボタンが表示されます。JSTの暦日（0時切替）から決定したSeedで、そのプレイ中は日付が変わっても固定。共有先も同じSeedです。端末時計が誤っている場合はDaily選択日もずれます。
+テスト: `tests/challenge.cjs` は200Seedの公平な配分、決定性、各干渉の応答・タイムスタンプ境界、URL安全性、Daily境界、結果・共有フォールバック・保存例外を検査。`tests/preview.html` のモード切替で公開Challengeも実時間60秒の操作シナリオと全寸法検査が可能です。
