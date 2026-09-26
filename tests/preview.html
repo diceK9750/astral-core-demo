@@ -147,7 +147,7 @@ function run(){
  checks.push(check(sw<=width+1&&sh<=height+1,'ページのはみ出し',sw+' × '+sh+' px / 表示領域 '+width+' × '+height+' px'));
  const canvas=doc.getElementById('scene'),cr=canvas&&rectangle(canvas);
  checks.push(check(!!canvas&&canvas.width>0&&canvas.height>0&&cr.width>=width-1&&cr.height>=height-1,'Canvas の描画領域',canvas?canvas.width+' × '+canvas.height+' bitmap px / CSS '+Math.round(cr.width)+' × '+Math.round(cr.height):'#scene が見つかりません'));
- const resultOpen=visible(doc.getElementById('result')),pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound']:['#coreTarget','#overdrive','#sound'];
+ const resultOpen=visible(doc.getElementById('result')),pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect','#shareChallenge','#backMode']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound','#normalMode','#challengeMode',...(!doc.getElementById('remoteInfo').hidden?['#dailyMode']:[])]:['#coreTarget','#overdrive','#sound'];
  const controls=selectors.map(s=>doc.querySelector(s)).filter(visible),missing=selectors.filter(s=>!visible(doc.querySelector(s)));
  checks.push(check(missing.length===0,'主要操作の表示',missing.length?'非表示または未検出：'+missing.join(', '):selectors.join(', ')));
  const escaped=controls.filter(el=>{const r=rectangle(el);return r.x < -1||r.y < -1||r.right>width+1||r.bottom>height+1;});
@@ -157,7 +157,7 @@ function run(){
  const colliding=[];for(let i=0;i<controls.length;i++)for(let j=i+1;j<controls.length;j++)if(overlap(rectangle(controls[i]),rectangle(controls[j])))colliding.push(label(controls[i])+' / '+label(controls[j]));
  checks.push(check(colliding.length===0,'主要ボタン同士の重なり',colliding.length?colliding.join(', '):'検出なし'));
  if(!introActive&&!resultOpen&&!pauseOpen){
-  const areas=['.topbar','.dock','.stage-label'].map(s=>doc.querySelector(s)).filter(visible),core=doc.getElementById('coreTarget'),obstructions=core&&visible(core)?areas.filter(el=>!el.contains(core)&&overlap(rectangle(el),rectangle(core))).map(label):[];
+  const areas=['.topbar','.dock','.stage-label','#signalBanner'].map(s=>doc.querySelector(s)).filter(visible),core=doc.getElementById('coreTarget'),obstructions=core&&visible(core)?areas.filter(el=>!el.contains(core)&&overlap(rectangle(el),rectangle(core))).map(label):[];
  checks.push(check(obstructions.length===0,'コア領域と HUD の重なり',obstructions.length?obstructions.join(', ')+'（意図した配置か目視確認）':'検出なし',true));
  }
  for(const [left,right,title]of[['.core-caption','#intro','コア状態と見出しの文字重なり'],['.stage-label','.event','上部ラベルと演出タイトルの文字重なり']]){
@@ -165,7 +165,7 @@ function run(){
   checks.push(check(!collides,title,collides?left+' / '+right+' の文字領域が重なっています':a.length&&b.length?'表示中の文字領域に重なりなし':'片方が非表示のため重なりなし'));
  }
  const textOverflow=[];
- for(const el of doc.querySelectorAll('.topbar,.stage-label,.core-caption,#intro,.event,.dock,.side,.keyhint,.game-hud,.result-card,.pause-card')){
+ for(const el of doc.querySelectorAll('.topbar,.stage-label,.core-caption,#intro,.event,.dock,.side,.keyhint,.game-hud,.signal-banner,.result-card,.pause-card')){
   if(textRectangles(el).some(r=>r.x < -1||r.y < -1||r.right>width+1||r.bottom>height+1))textOverflow.push(label(el));
  }
  checks.push(check(textOverflow.length===0,'表示テキストの画面内配置',textOverflow.length?textOverflow.join(', ')+' に画面外の文字領域あり':'表示中の HUD・説明・操作テキストは画面内'));
@@ -188,7 +188,7 @@ $('hold').addEventListener('click',async()=>{focusGame();await holdTest();run();
 $('play').addEventListener('click',async()=>{
  $('play').disabled=true;const doc=frame.contentDocument;focusGame();if(visible(doc.getElementById('result')))doc.getElementById('reconnect').click();else if(visible(doc.getElementById('connect')))doc.getElementById('connect').click();
  const start=performance.now();let cycles=0;const remote=doc.getElementById('app').classList.contains('remote');
- try{while(performance.now()-start<62000&&!visible(doc.getElementById('result'))){
+ try{while(performance.now()-start<90000&&!visible(doc.getElementById('result'))){
  if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();
  if(remote){const banner=doc.getElementById('signalBanner'),kind=doc.getElementById('signalType').textContent;
  if(visible(banner)&&!banner.classList.contains('solved')){if(kind.includes('VOID'))await delay(220);else if(kind.includes('PHASE SHIFT')){await holdTest();await delay(360);}else if(kind.includes('OVERLOAD')){if(doc.getElementById('coreStatus').textContent==='NOVA READY'){await novaTest();await delay(370);}else await delay(200);}else if(kind.includes('JAM')){await tapTest();await delay(550);}else if(kind.includes('PULSE')){if(banner.classList.contains('beat')){await tapTest();await delay(400);}else await delay(40);}}
