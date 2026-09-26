@@ -160,6 +160,11 @@ function run(){
  if(!introActive&&!resultOpen&&!pauseOpen){
   const areas=['.topbar','.dock','.stage-label','#signalBanner'].map(s=>doc.querySelector(s)).filter(visible),core=doc.getElementById('coreTarget'),obstructions=core&&visible(core)?areas.filter(el=>!el.contains(core)&&overlap(rectangle(el),rectangle(core))).map(label):[];
  checks.push(check(obstructions.length===0,'コア領域と HUD の重なり',obstructions.length?obstructions.join(', ')+'（意図した配置か目視確認）':'検出なし',true));
+ const hud=doc.querySelector('.game-hud'),signal=doc.getElementById('signalBanner'),hint=doc.querySelector('.hint');
+ checks.push(check(!visible(signal)||!visible(hud)||!overlap(rectangle(signal),rectangle(hud)),'UNKNOWN SIGNAL と数値 HUD の重なり',visible(signal)?'表示中の '+doc.getElementById('signalType').textContent:'信号非表示（出現中にも検査）'));
+ checks.push(check(!visible(hint)||!visible(core)||!overlap(rectangle(hint),rectangle(core)),'操作ヒントとコア操作領域の重なり','コアのタッチ領域とヒントを分離'));
+ if(demoApp.classList.contains('duel')){const metrics=['.time','.you','.rival','.delta'].map(s=>hud.querySelector(s)),ok=metrics.every(el=>visible(el)&&textRectangles(el).every(r=>r.x>=0&&r.right<=width&&r.y>=0&&r.bottom<=height))&&metrics.every((el,i)=>metrics.slice(i+1).every(other=>!overlap(rectangle(el),rectangle(other))));checks.push(check(ok,'Ghost Duel の4情報 HUD','TIME / YOU / RIVAL / DELTA の表示・画面内配置・相互重なり'));}
+
  }
  for(const [left,right,title]of[['.core-caption','#intro','コア状態と見出しの文字重なり'],['.stage-label','.event','上部ラベルと演出タイトルの文字重なり']]){
   const a=textRectangles(doc.querySelector(left)),b=textRectangles(doc.querySelector(right)),collides=a.some(ar=>b.some(br=>overlap(ar,br)));
