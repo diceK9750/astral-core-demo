@@ -34,7 +34,7 @@ for (const name of ['index.html', 'tests/preview.html']) {
   assert(!/user-scalable\s*=\s*no|maximum-scale\s*=\s*1(?:[,"']|$)/i.test(html), `${name}: viewport does not disable user zoom`);
 }
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-for (const id of ['scene', 'coreTarget', 'connect', 'overdrive', 'sound', 'intro', 'gameHud', 'timeValue', 'syncValue', 'comboValue', 'result', 'reconnect', 'resume']) {
+for (const id of ['scene', 'coreTarget', 'connect', 'overdrive', 'sound', 'intro', 'gameHud', 'timeValue', 'syncValue', 'comboValue', 'result', 'reconnect', 'resume', 'modeSwitch', 'normalMode', 'challengeMode', 'dailyMode', 'signalBanner', 'signalInstruction', 'remoteResult', 'resultScore', 'resultChallenge', 'shareChallenge', 'shareUrl', 'backMode']) {
   assert(new RegExp(`\\bid=["']${id}["']`).test(html), `index.html: #${id} present`);
 }
 for (const id of ['coreTarget', 'connect', 'overdrive', 'sound']) {
