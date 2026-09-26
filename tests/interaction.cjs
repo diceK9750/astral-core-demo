@@ -47,6 +47,7 @@ async function run(){
  ok(!Object.values(e.el).some(el=>/\b(?:NaN|Infinity|undefined)\b/.test(el.textContent+' '+el.innerHTML)),'No invalid display values');
  const limited=environment({reduced:true,audioAvailable:false,storageFail:true});await limited.advance(100);limited.el.connect.fire('click');await limited.tap();limited.pointer('pointerdown');await limited.advance(1100);limited.pointer('pointerup');await limited.advance(61000,1000);ok(!limited.el.result.hidden&&limited.vibrations.length===0,'Missing storage/audio and reduced motion still finish a run');limited.el.reconnect.fire('click');ok(limited.el.result.hidden,'Storage failure never blocks replay');
  const corrupt=environment({stored:'{"sync":"bad","rank":"INVALID"}'});corrupt.el.connect.fire('click');await corrupt.advance(61000,1000);ok(!corrupt.el.result.hidden,'Corrupt localStorage safely ignored');
+ const edge=environment({audioAvailable:false});edge.el.connect.fire('click');await edge.advance(59750,1000);await edge.tap();await edge.advance(1000,1000);ok(!edge.el.result.hidden&&Number(edge.el.resultSync.textContent)>0,'Final valid tap scores even if double-tap window crosses 60 seconds');
  console.log(`${passed} behavioral checks passed. Browser/device checks remain separate.`);
 }
 run().catch(error=>{console.error(error);process.exitCode=1;});
