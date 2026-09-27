@@ -1,7 +1,22 @@
 # ASTRAL CORE / REMOTE GHOST DUEL
 60秒で光る星を爆発連鎖させ、未来のコアとの同期率を高めるミニゲーム。
 公開: https://dicek9750.github.io/astral-core-demo/
-## 遊び方
+## 現行 R2 / ORBIT & TIME LOCK
+
+星片は画面外からCOREへ引き寄せられ、捕獲後は軌道を回り続けます。時間経過だけでは消えず、画面内の活動星片は最大18個。星片をタップすると即起爆し、波が届いた周囲の星片へ連鎖します。
+
+| 操作 | R2での動作 |
+| --- | --- |
+| 星片をタップ | 即起爆し、CHAINからSCORE／SYNC／COMBO／ENERGYを得る |
+| COREを0.9秒以上長押しして離す | CORE BURSTを1回使い、中心から軌道を横切る起爆波を放つ。1プレイ3回まで。早すぎる解放は消費しない |
+| 素早く2回タップ | NOVA。通常入力との使い分けと3.2秒のクールダウンは継続 |
+| TIME LOCK | 既存のOVERDRIVE解放条件とENERGY消費で実時間5秒だけ世界を止める。停止中に星片を選ぶとARMEDになり、終了時にすべて同時起爆する。ゲームの60秒時計・UNKNOWN SIGNAL・Ghost再生も停止 |
+
+新規ChallengeとDailyは`rules=R2`、R2のGhostは`gver=2`を発行します。旧`rules=R1`と`gver=1`のURLは従来の星連鎖・9秒OVERDRIVEで読み込めます。異なるRules Versionの記録は同条件の対戦として混ぜません。共有にはSeedと結果の量子化した61点だけを用い、アカウント・サーバー・端末IDは不要です。
+
+R2 Challenge例: https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R2
+
+## 遊び方（以下はR1の詳細。共通の操作・採点要素はR2にも継続）
 画面の光る星をタップすると即座にはじけ、広がった光のリングに触れた星が次々と爆発します。星を直接タップするとそのままゲームが始まります。密集した星や大きい光輪の星を狙い、連鎖を伸ばしてください。中央COREのタップや「同期を始める」でも開始でき、ページ再読み込みなしで再挑戦できます。
 
 | 操作 | 効果 |
@@ -40,6 +55,7 @@ node tests/ghost.cjs
 node tests/ux.cjs
 node tests/input.cjs
 node tests/stars.cjs
+node tests/orbit.cjs
 python3 -m http.server 8000
 ```
 ゲームのルール検査は出荷するモデルを直接抽出して実行します。操作検査はDOM・Canvas・Web Audioのモックで、タイマー、操作、音声開始制限、中断復帰、再挑戦、保存失敗を確認します。
