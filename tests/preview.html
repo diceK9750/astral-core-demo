@@ -157,6 +157,13 @@ function run(){
  checks.push(check(small.length===0,'タッチ領域 44 × 44 px',small.length?small.map(el=>label(el)+' '+Math.round(rectangle(el).width)+'×'+Math.round(rectangle(el).height)).join(', '):'主要操作の最小サイズを確保'));
  const colliding=[];for(let i=0;i<controls.length;i++)for(let j=i+1;j<controls.length;j++)if(overlap(rectangle(controls[i]),rectangle(controls[j])))colliding.push(label(controls[i])+' / '+label(controls[j]));
  checks.push(check(colliding.length===0,'主要ボタン同士の重なり',colliding.length?colliding.join(', '):'検出なし'));
+ if(introActive&&!resultOpen&&!pauseOpen){
+  const goal=doc.getElementById('heroTitle'),subtitle=doc.getElementById('heroSub'),gestures=[...doc.querySelectorAll('#hint .gesture')],texts=[goal,subtitle,...gestures];
+  const inside=texts.every(el=>visible(el)&&textRectangles(el).every(r=>r.x>=0&&r.right<=width&&r.y>=0&&r.bottom<=height));
+  checks.push(check(inside&&gestures.length===3,'初期目的と3操作の表示','目的・モード説明・TAP / HOLD / NOVA が画面内で読める'));
+  const target=doc.getElementById('coreTarget'),guide=doc.getElementById('hint');
+  checks.push(check(!overlap(rectangle(target),rectangle(guide)),'初期操作ガイドとCOREの分離','3操作の記号はCOREのタッチ領域外'));
+ }
  if(!introActive&&!resultOpen&&!pauseOpen){
   const areas=['.topbar','.dock','.stage-label','#signalBanner'].map(s=>doc.querySelector(s)).filter(visible),core=doc.getElementById('coreTarget'),obstructions=core&&visible(core)?areas.filter(el=>!el.contains(core)&&overlap(rectangle(el),rectangle(core))).map(label):[];
  checks.push(check(obstructions.length===0,'コア領域と HUD の重なり',obstructions.length?obstructions.join(', ')+'（意図した配置か目視確認）':'検出なし',true));
