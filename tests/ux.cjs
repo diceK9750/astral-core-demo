@@ -13,7 +13,7 @@ async function run(){
  ok(/タップ/.test(e.el.heroSub.textContent)&&/TAP[\s\S]*HOLD[\s\S]*NOVA/.test(html.match(/<p class="hint" id="hint">([^]*?)<\/p>/)[1]),'Core action and all three gesture symbols appear without a help screen');
  ok(html.includes('自分の限界へ')&&html.includes('同じ信号で競う'),'Both mode choices explain their purpose');
  e.el.connect.fire('click');await e.advance(100);
- ok(/コアをタップ/.test(e.el.hint.innerHTML)&&e.el.timeValue.textContent==='60','First run guides TAP while the same 60-second timer starts');
+ ok(/光る星をタップ/.test(e.el.hint.innerHTML)&&e.el.timeValue.textContent==='60','First run guides star TAP while the same 60-second timer starts');
  await e.tap();await e.advance(360);
  ok(/SYNC \+/.test(e.el.eventSubtitle.textContent)&&Number(e.el.syncValue.textContent)>0,'First successful TAP visibly links action to SYNC increase');
  ok(/長押し/.test(e.el.hint.innerHTML),'TAP success advances to HOLD guidance');
