@@ -37,6 +37,7 @@ node tests/game.cjs
 node tests/interaction.cjs
 node tests/challenge.cjs
 node tests/ghost.cjs
+node tests/ux.cjs
 python3 -m http.server 8000
 ```
 ゲームのルール検査は出荷するモデルを直接抽出して実行します。操作検査はDOM・Canvas・Web Audioのモックで、タイマー、操作、音声開始制限、中断復帰、再挑戦、保存失敗を確認します。
