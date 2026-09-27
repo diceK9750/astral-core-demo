@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+const sections=['SYNC_MODEL','REMOTE_MODEL','GHOST_MODEL','STAR_MODEL','ORBIT_MODEL'].map(name=>'//'+html.split('// '+name+'_BEGIN')[1].split('// '+name+'_END')[0]).join('\n');
+const m=vm.runInNewContext(sections+'\n({SyncTest,RemoteTest,OrbitTest,OrbitRemoteTest,StarField,OrbitalField,challengeURL,parseChallenge,parseGhost,ghostURL,GhostRecorder,ghostEncode,ghostDecode,ghostSample})',{URL,URLSearchParams});
+const {environment}=require('./interaction.cjs');let count=0;
+function ok(test,title){assert.ok(test,title);count++;console.log('PASS '+title);}
+const seed='A7F291C8',g={W:390,H:844,cx:195,cy:365.4,R:99.45,top:146,bottom:557},base='https://dicek9750.github.io/astral-core-demo/';
+let a=new m.OrbitalField(seed),b=new m.OrbitalField(seed),c=new m.OrbitalField('91C8A7F2');
+ok(a.stars.length===10&&a.stars.every(s=>s.state==='INBOUND'),'Initial fragments originate as inbound meteors');
+ok(JSON.stringify(a.stars)===JSON.stringify(b.stars),'R2 seed reproduces entry times, angles, speeds and orbit parameters');
+ok(JSON.stringify(a.stars)!==JSON.stringify(c.stars),'Different seed changes the influx');
+const first=a.stars[0],edge=a.position(first,first.born,g),near=a.position(first,first.born+first.duration*.75,g);
+ok(Math.hypot(edge.x-g.cx,edge.y-g.cy)>Math.hypot(near.x-g.cx,near.y-g.cy),'Inbound trajectory approaches the CORE');
+a.update(0,g,()=>{});ok(a.stars.some(s=>s.state==='CAPTURE')&&a.stars.some(s=>s.state==='ORBIT'),'Capture transitions smoothly to an orbit');
+const orbit=a.stars.find(s=>s.state==='ORBIT'),before=a.point(orbit,g);a.update(.8,g,()=>{});const after=a.point(orbit,g);ok(orbit.state==='ORBIT'&&Math.hypot(after.x-before.x,after.y-before.y)>0,'Satellite keeps revolving');
+for(const [name,geo] of Object.entries({phone:g,small:{W:320,H:568,cx:160,cy:285,R:59,top:135,bottom:427},landscape:{W:844,H:390,cx:422,cy:200,R:59,top:112,bottom:320},desktop:{W:1920,H:1080,cx:960,cy:530,R:180,top:120,bottom:900}})){
+ const f=new m.OrbitalField(seed);f.update(30,geo,()=>{});ok(f.stars.length<=18&&f.waves.length<=24&&f.stars.every(s=>{const p=f.point(s,geo);return p.x>=27&&p.x<=geo.W-27&&p.y>=geo.top&&p.y<=geo.bottom;}),name+' 30s is bounded within the play area');
+ f.update(59,geo,()=>{});ok(f.stars.length===18&&f.stars.every(s=>s.alive),'No satellite expires with time; spawning pauses at 18');
+}
+a=new m.OrbitalField(seed);a.update(12,g,()=>{});const countBefore=a.stars.length,spawned=a.spawned;a.update(13,g,()=>{});ok(a.stars.length===18&&a.spawned===spawned,'No new object is created at capacity');
+let chosen=a.stars.find(s=>s.state==='ORBIT'),pos=a.point(chosen,g),hits=[];ok(a.hit(pos.x,pos.y,g)?.id===chosen.id,'Nearest visible satellite is touchable');
+a.trigger(pos.x,pos.y,13,g,(star,chain)=>hits.push([star.id,chain]));ok(!chosen.alive&&hits.length===1,'Direct star tap detonates immediately');
+a.update(13.04,g,(star,chain)=>hits.push([star.id,chain]));ok(a.stars.length<countBefore,'Destroyed stars leave an empty slot');
+a.update(14,g,(star,chain)=>hits.push([star.id,chain]));ok(a.spawned>spawned,'Incoming meteors resume when slots free up');
+ok(new Set(hits.map(h=>h[0])).size===hits.length&&a.bestChain>=1,'Chain never scores the same fragment twice');
+let burst=new m.OrbitalField(seed);burst.update(15,g,()=>{});const group=burst.coreBurst(15,g,()=>{});for(let t=15.04;t<15.9;t+=.04)burst.update(t,g,()=>{});ok(group.count>0,'Core wave ignites satellites at orbital distance');
+let game=new m.OrbitRemoteTest(seed);game.start();ok(game.coreBursts===3,'Core starts with three burst cells');ok(!game.coreBurst(.5)&&game.coreBursts===3,'Early release consumes no cell');for(let i=0;i<3;i++)ok(game.coreBurst(1.1),'Ideal release consumes one cell');ok(!game.coreBurst(1.1)&&game.coreBursts===0,'Fourth CORE BURST is unavailable');
+game.advance(8);let signal=game.currentSignal;Object.assign(game,{energy:100,score:1000,taps:5,holds:3,novas:3});ok(game.overdrive()&&game.timeLockLeft===5,'Qualified OVERDRIVE begins a five-second TIME LOCK');const frozen=game.elapsed,phase=a.point(a.stars[0],g),waveAge=a.waves[0]?.born,signalWin=game.signalWins;
+game.advance(2.2,true);ok(game.elapsed===frozen&&game.timeLockLeft<3,'The 60-second timer and signal world remain frozen');ok(game.signalWins===signalWin&&game.currentSignal===signal,'UNKNOWN SIGNAL cannot settle during TIME LOCK');ok(game.driveLeft===game.timeLockLeft,'Drive countdown uses real time during the lock');ok(!game.coreBurst(1.1),'Core bursts cannot occur in frozen time');
+let locked=new m.OrbitalField(seed);locked.update(12,g,()=>{});let orig=locked.stars.filter(s=>s.state==='ORBIT').slice(0,3),locations=orig.map(s=>locked.point(s,g));
+for(let i=0;i<3;i++){const p=locations[i];ok(locked.arm(p.x,p.y,g)!==null,'Freeze can arm a satellite');}ok(locked.stars.filter(s=>s.state==='ARMED').length===3,'Three selected stars are stored once');ok(locked.arm(locations[0].x,locations[0].y,g)===null,'Already armed star cannot be selected twice');
+let frozenPositions=locked.stars.map(s=>locked.point(s,g));ok(locked.time===12&&JSON.stringify(frozenPositions)===JSON.stringify(locked.stars.map(s=>locked.point(s,g))),'No world update means inbound and orbit positions stay fixed');
+let simultaneous=[];const armed=locked.restart(12,g,(s,n)=>simultaneous.push([s.id,n]));ok(armed===3&&simultaneous.length===3&&locked.waves.length>=3&&locked.waves.slice(-3).every(w=>w.born===12),'TIME RESTART detonates all ARMED stars in one world frame');
+locked.update(12.5,g,(s,n)=>simultaneous.push([s.id,n]));ok(simultaneous.length>=3&&locked.bestChain>=3,'Restart shockwaves can propagate a shared chain');
+game.advance(2.8);ok(game.timeLockEnded&&game.timeLockLeft===0&&game.elapsed===frozen,'Lock expiry flags restart without spending world time');game.advance(.1);ok(game.elapsed>frozen,'The world resumes after the simultaneous ignition');
+ok(m.parseChallenge('?challenge='+seed+'&rules=R2').rules==='R2'&&m.parseChallenge('?challenge='+seed+'&rules=R1').rules==='R1','R1 and R2 Challenge URLs retain their rule identities');ok(m.challengeURL(seed,base).endsWith('rules=R2')&&m.challengeURL(seed,base,'R1').endsWith('rules=R1'),'New shares use R2 and explicit legacy shares keep R1');
+let ghostGame=new m.OrbitRemoteTest(seed),rec=new m.GhostRecorder(seed);ghostGame.start();ghostGame.advance(60);rec.observe(ghostGame);let record=rec.finish(ghostGame),r2url=m.ghostURL(seed,record,base,'R2'),r1url=m.ghostURL(seed,record,base,'R1');ok(m.parseGhost(new URL(r2url).search,seed).data.version===2&&new URL(r2url).searchParams.get('gver')==='2','R2 ghost has an explicit version and decodes');ok(m.parseGhost(new URL(r1url).search,seed).data.version===1,'Old gver=1 links remain readable');ok(m.parseGhost(new URL(r1url.replace('rules=R1','rules=R2')).search,seed).invalid,'Legacy ghost cannot be relabeled as R2');ok(r2url.length<1000,'R2 ghost remains short enough to share');
+async function ui(){const e=environment({search:'?challenge='+seed+'&rules=R2',audioAvailable:false});ok(e.el.app.classList.contains('orbit-r2')&&e.el.challengeLabel.textContent.includes('A7F2'),'R2 Challenge opens the orbital world');e.el.connect.fire('click');await e.advance(60);ok(e.el.burstCells.getAttribute('aria-label').includes('3回'),'CORE BURST cells visible during play');await e.advance(61000,1000);ok(!e.el.result.hidden&&e.el.remoteResult.textContent!==null,'R2 Challenge finishes the 60-second test');const old=environment({search:'?challenge='+seed+'&rules=R1',audioAvailable:false});ok(!old.el.app.classList.contains('orbit-r2'),'Legacy R1 selects original world and rules');const rival=environment({search:new URL(r2url).search,audioAvailable:false});ok(rival.el.app.classList.contains('duel')&&rival.el.app.classList.contains('orbit-r2'),'R2 Ghost Duel selects same R2 orbital world');}
+ui().then(()=>console.log(count+' orbital checks passed.')).catch(e=>{console.error(e);process.exitCode=1;});

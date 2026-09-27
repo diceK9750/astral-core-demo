@@ -20,7 +20,7 @@ g=fresh();const v=g.events.find(e=>e.kind==='VOID');g.advance(v.start-.1);g.adva
 g=fresh();g.advance(v.start-.2);Object.assign(g,{combo:20,lastAction:g.elapsed,lastInput:g.elapsed});g.advance(3.4);ok(g.combo===20,'Quiet VOID preserves combo');
 g=fresh();const pulse=g.events.find(e=>e.kind==='PULSE');g.advance(pulse.start+pulse.beat);g.advance(.33);g.input('tap',0,pulse.start+pulse.beat);ok(pulse.success,'Deferred taps use physical release timestamp for pulse accuracy');
 g=fresh();const p2=g.events.find(e=>e.kind==='PULSE');g.advance(p2.end-.1);g.advance(.33);const r=g.input('tap',0,p2.end-.1);ok(r.ok&&!p2.settled,'Event settlement allows the double-tap decision window');
-const url=challengeURL('a7f291c8','https://dicek9750.github.io/astral-core-demo/?junk=x#private');ok(url==='https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R1','Shared URL contains only canonical seed and rules');
+const url=challengeURL('a7f291c8','https://dicek9750.github.io/astral-core-demo/?junk=x#private','R1');ok(url==='https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R1','Shared URL contains only canonical seed and rules');
 ok(dailySeed(new Date('2026-09-25T15:00:00Z')).day==='2026.09.26','Daily rolls over exactly at midnight JST');ok(dailySeed(new Date('2026-09-25T14:59:59Z')).seed!==dailySeed(new Date('2026-09-25T15:00:00Z')).seed,'Daily changes at JST boundary');
 // Existing top-state conditions remain available inside Challenge.
 g=fresh();Object.assign(g,{elapsed:58,score:1300,combo:20,maxCombo:20,goodTaps:12,holds:6,novas:6,taps:20,driveLeft:8,driveCount:2,driveActions:7,driveHold:true,driveNova:true,lastInput:57.4,lastAction:57.4});g.input('tap');ok(g.singularity&&g.rank[0]==='SS','Challenge retains SINGULARITY and SS');

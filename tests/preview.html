@@ -26,6 +26,7 @@
 <label for="testMode">モード<select id="testMode"><option value="normal">NORMAL</option><option value="challenge">CHALLENGE A7F291C8</option><option value="ghost">CAPTURED GHOST</option></select></label><button type="button" class="primary" id="run">Run checks</button>
 <button type="button" id="measure">180 frames を計測</button>
 <label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">上級操作を60秒検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="cadence">タップ間隔を検証</button><button type="button" id="reload">起動からやり直す</button>
+<button type="button" id="orbitTrial">R2 軌道・TIME LOCK 検証</button>
 </div>
 <div class="controls"><button type="button" id="captureGhost">結果のGhost URLを取得</button><button type="button" id="openGhost">記録を別ページで対戦</button><label style="flex:1;min-width:250px">Ghost URL<input id="ghostLink" type="url" style="width:100%;min-height:44px;background:#111b2b;color:#cae7ff;border:1px solid #40506a;padding:10px"></label><span id="ghostReadout" class="summary"></span></div>
 <pre id="cadenceLog" class="summary" aria-live="polite"></pre>
@@ -198,6 +199,41 @@ async function tapTest(){gesture('pointerdown');await delay(65);gesture('pointer
 async function holdTest(){gesture('pointerdown');await delay(1100);gesture('pointerup');}
 async function novaTest(){await tapTest();await delay(90);await tapTest();}
 function focusGame(){frame.contentWindow.focus();const doc=frame.contentDocument;if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();}
+function gestureAt(type,x,y){const win=frame.contentWindow;frame.contentDocument.getElementById('stage').dispatchEvent(new win.PointerEvent(type,{pointerId:93,isPrimary:true,button:0,clientX:x,clientY:y,bubbles:true}));}
+async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.disabled=true;log.textContent='R2 軌道の実ブラウザ検証を準備中…';
+ try{
+  const loading=new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Frame load timeout')),8000);frame.addEventListener('load',()=>{clearTimeout(timeout);resolve();},{once:true});});
+  $('testMode').value='challenge';frame.src='../index.html?challenge=A7F291C8&rules=R2&qa='+Date.now();await loading;
+  const doc=frame.contentDocument,win=frame.contentWindow,app=doc.getElementById('app');doc.getElementById('connect').click();await delay(250);
+  const fieldSource=await fetch('../index.html').then(response=>response.text());
+  const starModel='//'+fieldSource.split('// STAR_MODEL_BEGIN')[1].split('// STAR_MODEL_END')[0];
+  const orbitModel='//'+fieldSource.split('// ORBIT_MODEL_BEGIN')[1].split('// ORBIT_MODEL_END')[0];
+  const OrbitalField=Function(starModel+'\n'+orbitModel+'\nreturn OrbitalField')();
+  const stage=doc.getElementById('stage'),box=app.getBoundingClientRect(),rect=stage.getBoundingClientRect(),W=win.innerWidth,H=win.innerHeight,landscape=W>H&&H<=520,R=Math.max(34,Math.min(W*(landscape?.14:.255),rect.height*(landscape?.21:H<=740?.205:.225),205));
+  const geo={W,H,cx:rect.left-box.left+rect.width/2,cy:rect.top-box.top+rect.height*(landscape?.60:H<=740?.58:.55),R,top:rect.top-box.top+82,bottom:rect.bottom-box.top-55};
+  const corner={x:rect.left+15,y:rect.bottom-18};
+  async function holdCorner(){gestureAt('pointerdown',corner.x,corner.y);await delay(1070);gestureAt('pointerup',corner.x,corner.y);}
+  async function novaCorner(){gestureAt('pointerdown',corner.x,corner.y);await delay(65);gestureAt('pointerup',corner.x,corner.y);await delay(90);gestureAt('pointerdown',corner.x,corner.y);await delay(65);gestureAt('pointerup',corner.x,corner.y);}
+  for(let i=0;i<5;i++){gestureAt('pointerdown',corner.x,corner.y);await delay(65);gestureAt('pointerup',corner.x,corner.y);await delay(340);}
+  await novaCorner();await delay(3300);await novaCorner();
+  for(let i=0;i<20&&doc.getElementById('overdrive').disabled;i++){await holdCorner();await delay(120);log.textContent='TIME LOCK 解放条件を準備中 · HOLD '+(i+1)+' / 20 · SYNC '+doc.getElementById('syncValue').textContent;}
+  if(doc.getElementById('overdrive').disabled)throw Error('TIME LOCK was never ready');
+  const f=new OrbitalField('A7F291C8'),worldTime=60*(1-Number(app.style.getPropertyValue('--time')));f.update(worldTime,geo,()=>{});
+  const candidates=f.stars.filter(s=>s.alive&&s.state==='ORBIT');
+  doc.getElementById('overdrive').click();await delay(130);
+  if(!app.classList.contains('time-locked'))throw Error('TIME LOCK did not start');
+  const frozen=doc.getElementById('scene').toDataURL(),time=doc.getElementById('timeValue').textContent,score=doc.getElementById('resultScore').textContent;
+  await delay(350);if(doc.getElementById('scene').toDataURL()!==frozen||doc.getElementById('timeValue').textContent!==time)throw Error('World or game timer moved during lock');
+  const armed=[];for(const star of candidates){const p=f.point(star,geo);if(armed.some(q=>Math.hypot(q.x-p.x,q.y-p.y)<65))continue;gestureAt('pointerdown',p.x,p.y);await delay(55);gestureAt('pointerup',p.x,p.y);armed.push(p);if(armed.length===3)break;}
+  if(armed.length<3)throw Error('Not enough spaced orbital targets');
+  log.textContent='TIME LOCK 中 · 3 星片を選択 · TIME '+time+' · 再始動待ち';
+  await delay(4900);const title=doc.getElementById('eventTitle').textContent;
+  if(title!=='TIME RESTART'&&doc.getElementById('chainValue').textContent==='0')throw Error('Simultaneous restart did not produce a chain');
+  log.textContent='PASS · 流星→軌道 · 世界静止（Canvas同一） · 3星片選択 · '+title+' · CHAIN ×'+doc.getElementById('chainValue').textContent+' · TIMER '+time+'→'+doc.getElementById('timeValue').textContent+' · errors '+errors.length;
+  run();
+ }catch(e){log.textContent='FAIL · '+e.stack;}finally{button.disabled=false;}
+}
+$('orbitTrial').addEventListener('click',orbitTrial);
 $('hold').addEventListener('click',async()=>{focusGame();await holdTest();run();});$('novaTest').addEventListener('click',async()=>{focusGame();await novaTest();run();});
 $('cadence').addEventListener('click',async()=>{
  const button=$('cadence'),log=$('cadenceLog');button.disabled=true;log.textContent='入力テンポを測定中…';

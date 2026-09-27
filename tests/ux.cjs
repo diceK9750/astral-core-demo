@@ -57,10 +57,10 @@ async function run(){
  for(let i=0;i<4;i++){await drive.tap();await drive.advance(480);}
  for(let i=0;i<2;i++){await drive.tap();await drive.advance(85);await drive.tap();await drive.advance(3300,250);}
  let sawReadyPulse=false;for(let i=0;i<16;i++){drive.pointer('pointerdown');await drive.advance(1080,250);drive.pointer('pointerup');await drive.advance(110);sawReadyPulse ||= drive.el.app.classList.contains('drive-ready');}
- ok(!drive.el.overdrive.disabled&&drive.el.overdriveLabel.textContent==='OVERDRIVE READY'&&drive.el.overdriveSub.textContent==='いま解放','Qualifying inputs reveal an actionable OVERDRIVE READY button');
+ ok(!drive.el.overdrive.disabled&&drive.el.overdriveLabel.textContent==='TIME LOCK READY'&&drive.el.overdriveSub.textContent==='いま解放','Qualifying inputs reveal an actionable TIME LOCK READY button');
  ok(sawReadyPulse,'Ready state gives one brief button pulse');
  await drive.advance(1250,250);ok(!drive.el.app.classList.contains('drive-ready')&&!drive.el.overdrive.disabled,'Ready pulse ends without blinking while the button stays usable');
- drive.el.overdrive.fire('click');ok(drive.el.overdriveLabel.textContent==='OVERDRIVE ACTIVE','One press engages existing OVERDRIVE');
+ drive.el.overdrive.fire('click');ok(drive.el.overdriveLabel.textContent==='TIME LOCK','One press engages TIME LOCK');
  ok(html.includes('touch-action:none')&&html.includes("'contextmenu',e=>e.preventDefault()"),'Double TAP and long press suppress browser gesture interference');
  console.log(`${count} first-play UX checks passed.`);
 }
