@@ -25,9 +25,10 @@
 </select></label>
 <label for="testMode">モード<select id="testMode"><option value="normal">NORMAL</option><option value="challenge">CHALLENGE A7F291C8</option><option value="ghost">CAPTURED GHOST</option></select></label><button type="button" class="primary" id="run">Run checks</button>
 <button type="button" id="measure">180 frames を計測</button>
-<label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">上級操作を60秒検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="reload">起動からやり直す</button>
+<label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">上級操作を60秒検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="cadence">タップ間隔を検証</button><button type="button" id="reload">起動からやり直す</button>
 </div>
 <div class="controls"><button type="button" id="captureGhost">結果のGhost URLを取得</button><button type="button" id="openGhost">記録を別ページで対戦</button><label style="flex:1;min-width:250px">Ghost URL<input id="ghostLink" type="url" style="width:100%;min-height:44px;background:#111b2b;color:#cae7ff;border:1px solid #40506a;padding:10px"></label><span id="ghostReadout" class="summary"></span></div>
+<pre id="cadenceLog" class="summary" aria-live="polite"></pre>
 <div class="layout">
 <section class="preview-area" aria-label="デモの表示領域">
 <div id="readout" class="viewport-readout"></div>
@@ -198,6 +199,15 @@ async function holdTest(){gesture('pointerdown');await delay(1100);gesture('poin
 async function novaTest(){await tapTest();await delay(90);await tapTest();}
 function focusGame(){frame.contentWindow.focus();const doc=frame.contentDocument;if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();}
 $('hold').addEventListener('click',async()=>{focusGame();await holdTest();run();});$('novaTest').addEventListener('click',async()=>{focusGame();await novaTest();run();});
+$('cadence').addEventListener('click',async()=>{
+ const button=$('cadence'),log=$('cadenceLog');button.disabled=true;log.textContent='入力テンポを測定中…';
+ try{const rows=[];for(const interval of [150,200,250,300,400]){
+  const loadedFrame=new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Frame load timeout')),8000);frame.addEventListener('load',()=>{clearTimeout(timeout);resolve();},{once:true});});
+  frame.src='../index.html?qa='+Date.now();await loadedFrame;const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(250);
+  const samples=[];for(let i=0;i<5;i++){const before=Number(doc.getElementById('syncValue').textContent);const started=performance.now();await tapTest();const after=Number(doc.getElementById('syncValue').textContent);samples.push({delta:+(after-before).toFixed(2),feedback:doc.getElementById('eventTitle').textContent,at:Math.round(performance.now()-started)});if(i<4)await delay(Math.max(0,interval-65));}
+  rows.push(interval+'ms ×5: '+samples.map(s=>s.delta>0?'+'+s.delta:'MISS').join(' / ')+' · NOVA '+samples.some(s=>s.feedback==='N O V A'||s.feedback==='SYNC CHAIN')+' · '+(samples.every(s=>s.delta>0)?'PASS':'FAIL'));log.textContent=rows.join('\n');
+ }run();}catch(e){log.textContent+='\nFAIL: '+e.message;}finally{button.disabled=false;}
+});
 $('play').addEventListener('click',async()=>{
  $('play').disabled=true;const doc=frame.contentDocument;focusGame();if(visible(doc.getElementById('result')))doc.getElementById('reconnect').click();else if(visible(doc.getElementById('connect')))doc.getElementById('connect').click();
  const start=performance.now();let cycles=0,overtakes=0,lastLead='';const duel=doc.getElementById('app').classList.contains('duel'),casual=$('pilot').value==='casual';const watch=new MutationObserver(()=>{const lead=doc.getElementById('stageMode').textContent;if(lead==='OVERTAKE'&&lastLead!==lead)overtakes++;lastLead=lead;});watch.observe(doc.getElementById('stageMode'),{childList:true,subtree:true,characterData:true});if(duel)await delay(3000);const remote=doc.getElementById('app').classList.contains('remote');
