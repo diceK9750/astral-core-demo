@@ -158,7 +158,7 @@ function run(){
  const colliding=[];for(let i=0;i<controls.length;i++)for(let j=i+1;j<controls.length;j++)if(overlap(rectangle(controls[i]),rectangle(controls[j])))colliding.push(label(controls[i])+' / '+label(controls[j]));
  checks.push(check(colliding.length===0,'主要ボタン同士の重なり',colliding.length?colliding.join(', '):'検出なし'));
  if(introActive&&!resultOpen&&!pauseOpen){
-  const goal=doc.getElementById('heroTitle'),subtitle=doc.getElementById('heroSub'),gestures=[...doc.querySelectorAll('#hint .gesture')],texts=[goal,subtitle,...gestures];
+  const goal=visible(doc.getElementById('heroTitle'))?doc.getElementById('heroTitle'):doc.getElementById('landscapeTitle'),subtitle=visible(doc.getElementById('heroSub'))?doc.getElementById('heroSub'):doc.getElementById('landscapePurpose'),gestures=[...doc.querySelectorAll('#hint .gesture')],texts=[goal,subtitle,...gestures];
   const inside=texts.every(el=>visible(el)&&textRectangles(el).every(r=>r.x>=0&&r.right<=width&&r.y>=0&&r.bottom<=height));
   checks.push(check(inside&&gestures.length===3,'初期目的と3操作の表示','目的・モード説明・TAP / HOLD / NOVA が画面内で読める'));
   const target=doc.getElementById('coreTarget'),guide=doc.getElementById('hint');
