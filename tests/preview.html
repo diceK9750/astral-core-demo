@@ -223,7 +223,7 @@ async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.
   doc.getElementById('overdrive').click();await delay(130);
   if(!app.classList.contains('time-locked'))throw Error('TIME LOCK did not start');
   const frozen=doc.getElementById('scene').toDataURL(),time=doc.getElementById('timeValue').textContent;
-  await delay(350);if(doc.getElementById('scene').toDataURL()!==frozen||doc.getElementById('timeValue').textContent!==time)throw Error('World or game timer moved during lock');
+  await delay(350);const following=doc.getElementById('scene').toDataURL(),later=doc.getElementById('timeValue').textContent;if(following!==frozen||later!==time)throw Error('World or timer moved during lock: canvas '+(following===frozen?'same':'DIFFERENT')+' ('+frozen.length+'→'+following.length+'), TIME '+time+'→'+later+', lock '+doc.getElementById('timeLockValue').textContent);
   const armed=[];for(const star of candidates){const p=f.point(star,geo);if(armed.some(q=>Math.hypot(q.x-p.x,q.y-p.y)<48))continue;const before=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);gestureAt('pointerdown',p.x,p.y);await delay(55);gestureAt('pointerup',p.x,p.y);const after=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);if(after>before)armed.push(p);if(armed.length===3)break;}
   if(armed.length<3)throw Error('Three distinct fragments were not armed: '+armed.length);
   log.textContent='TIME LOCK 中 · 3 星片を選択 · TIME '+time+' · 再始動待ち';
