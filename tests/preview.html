@@ -222,13 +222,13 @@ async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.
   const candidates=f.stars.filter(s=>s.alive&&s.state==='ORBIT');
   doc.getElementById('overdrive').click();await delay(130);
   if(!app.classList.contains('time-locked'))throw Error('TIME LOCK did not start');
-  const frozen=doc.getElementById('scene').toDataURL(),time=doc.getElementById('timeValue').textContent,score=doc.getElementById('resultScore').textContent;
+  const frozen=doc.getElementById('scene').toDataURL(),time=doc.getElementById('timeValue').textContent;
   await delay(350);if(doc.getElementById('scene').toDataURL()!==frozen||doc.getElementById('timeValue').textContent!==time)throw Error('World or game timer moved during lock');
-  const armed=[];for(const star of candidates){const p=f.point(star,geo);if(armed.some(q=>Math.hypot(q.x-p.x,q.y-p.y)<65))continue;gestureAt('pointerdown',p.x,p.y);await delay(55);gestureAt('pointerup',p.x,p.y);armed.push(p);if(armed.length===3)break;}
-  if(armed.length<3)throw Error('Not enough spaced orbital targets');
+  const armed=[];for(const star of candidates){const p=f.point(star,geo);if(armed.some(q=>Math.hypot(q.x-p.x,q.y-p.y)<48))continue;const before=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);gestureAt('pointerdown',p.x,p.y);await delay(55);gestureAt('pointerup',p.x,p.y);const after=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);if(after>before)armed.push(p);if(armed.length===3)break;}
+  if(armed.length<3)throw Error('Three distinct fragments were not armed: '+armed.length);
   log.textContent='TIME LOCK 中 · 3 星片を選択 · TIME '+time+' · 再始動待ち';
   await delay(4900);const title=doc.getElementById('eventTitle').textContent;
-  if(title!=='TIME RESTART'&&doc.getElementById('chainValue').textContent==='0')throw Error('Simultaneous restart did not produce a chain');
+  if(title!=='TIME RESTART'||!doc.getElementById('eventSubtitle').textContent.includes('3 PHASES RELEASED'))throw Error('All three phases did not release together');
   log.textContent='PASS · 流星→軌道 · 世界静止（Canvas同一） · 3星片選択 · '+title+' · CHAIN ×'+doc.getElementById('chainValue').textContent+' · TIMER '+time+'→'+doc.getElementById('timeValue').textContent+' · errors '+errors.length;
   run();
  }catch(e){log.textContent='FAIL · '+e.stack;}finally{button.disabled=false;}
