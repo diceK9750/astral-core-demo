@@ -134,6 +134,8 @@ function run(){
  if(!loaded){clearLayoutWait();$('summary').textContent='読み込み完了を待っています。';return;}
  try{
  const win=frame.contentWindow,doc=frame.contentDocument,demoApp=doc.getElementById('app');
+ // QA toolbar focus must not turn an active-play layout check into a pause-panel check.
+ if(demoApp?.classList.contains('connected')&&!visible(doc.getElementById('result')))focusGame();
  if(demoApp&&demoApp.classList.contains('loading')){
   if(!layoutDeadline)layoutDeadline=performance.now()+10000;
   $('checks').replaceChildren();$('timestamp').textContent='';$('phase').textContent='現在：起動演出待ち。接続状態・配置の合否はまだ判定していません。';
