@@ -152,11 +152,11 @@ function run(){
  checks.push(check(sw<=width+1&&sh<=height+1,'ページのはみ出し',sw+' × '+sh+' px / 表示領域 '+width+' × '+height+' px'));
  const canvas=doc.getElementById('scene'),cr=canvas&&rectangle(canvas);
  checks.push(check(!!canvas&&canvas.width>0&&canvas.height>0&&cr.width>=width-1&&cr.height>=height-1,'Canvas の描画領域',canvas?canvas.width+' × '+canvas.height+' bitmap px / CSS '+Math.round(cr.width)+' × '+Math.round(cr.height):'#scene が見つかりません'));
- const resultOpen=visible(doc.getElementById('result')),pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect','#shareChallenge',...(!doc.getElementById('shareSeedOnly').hidden?['#shareSeedOnly']:[]),'#backMode']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound',...(!demoApp.classList.contains('duel')?['#normalMode','#challengeMode',...(!doc.getElementById('remoteInfo').hidden?['#dailyMode']:[])]:[])]:['#coreTarget','#overdrive','#sound'];
+ const resultOpen=visible(doc.getElementById('result')),resultPanel=doc.getElementById('result'),resultScroll=resultOpen&&win.getComputedStyle(resultPanel).overflowY==='auto',pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect','#shareChallenge',...(!doc.getElementById('shareSeedOnly').hidden?['#shareSeedOnly']:[]),'#backMode']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound',...(!demoApp.classList.contains('duel')?['#normalMode','#challengeMode',...(!doc.getElementById('remoteInfo').hidden?['#dailyMode']:[])]:[])]:['#coreTarget','#overdrive','#sound'];
  const controls=selectors.map(s=>doc.querySelector(s)).filter(visible),missing=selectors.filter(s=>!visible(doc.querySelector(s)));
  checks.push(check(missing.length===0,'主要操作の表示',missing.length?'非表示または未検出：'+missing.join(', '):selectors.join(', ')));
- const escaped=controls.filter(el=>{const r=rectangle(el);return r.x < -1||r.y < -1||r.right>width+1||r.bottom>height+1;});
- checks.push(check(escaped.length===0,'操作ボタンの画面内配置',escaped.length?escaped.map(label).join(', '):'表示中の主要操作は画面内'));
+ const escaped=controls.filter(el=>{const r=rectangle(el);return r.x < -1||r.right>width+1||(resultScroll?r.y < -resultPanel.scrollTop-1||r.bottom>resultPanel.scrollHeight-resultPanel.scrollTop+1:r.y < -1||r.bottom>height+1);});
+ checks.push(check(escaped.length===0,'操作ボタンの画面内配置',escaped.length?escaped.map(label).join(', '):resultScroll?'結果は縦スクロール可能。横にはみ出さず、全操作へ到達できる':'表示中の主要操作は画面内'));
  const small=controls.filter(el=>{const r=rectangle(el);return r.width<43.5||r.height<43.5;});
  checks.push(check(small.length===0,'タッチ領域 44 × 44 px',small.length?small.map(el=>label(el)+' '+Math.round(rectangle(el).width)+'×'+Math.round(rectangle(el).height)).join(', '):'主要操作の最小サイズを確保'));
  const colliding=[];for(let i=0;i<controls.length;i++)for(let j=i+1;j<controls.length;j++)if(overlap(rectangle(controls[i]),rectangle(controls[j])))colliding.push(label(controls[i])+' / '+label(controls[j]));
@@ -183,7 +183,7 @@ function run(){
  }
  const textOverflow=[];
  for(const el of doc.querySelectorAll('.topbar,.stage-label,.core-caption,#intro,.event,.dock,.side,.keyhint,.game-hud,.signal-banner,.result-card,.pause-card')){
-  if(textRectangles(el).some(r=>r.x < -1||r.y < -1||r.right>width+1||r.bottom>height+1))textOverflow.push(label(el));
+  if(textRectangles(el).some(r=>r.x < -1||r.right>width+1||(resultScroll&&el.classList.contains('result-card')?r.y < -resultPanel.scrollTop-1||r.bottom>resultPanel.scrollHeight-resultPanel.scrollTop+1:r.y < -1||r.bottom>height+1)))textOverflow.push(label(el));
  }
  checks.push(check(textOverflow.length===0,'表示テキストの画面内配置',textOverflow.length?textOverflow.join(', ')+' に画面外の文字領域あり':'表示中の HUD・説明・操作テキストは画面内'));
  const badText=doc.body.innerText.match(/\b(?:NaN|Infinity|undefined)\b/g)||[];
@@ -194,7 +194,7 @@ function run(){
 }
 frame.addEventListener('load',()=>{loaded=true;errors=[];try{monitor();setViewport();}catch(e){$('summary').textContent='同一オリジンで開いてください：'+e.message;}});
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-async function allSizes(){focusGame();const saved=$('viewport').value,results=[];$('allSizes').disabled=true;for(const option of $('viewport').options){$('viewport').value=option.value;setViewport();await new Promise(resolve=>{let done=false;const end=()=>{if(!done){done=true;resolve();}};frame.contentWindow.requestAnimationFrame(()=>frame.contentWindow.requestAnimationFrame(end));setTimeout(end,3500);});run();results.push(option.textContent+': '+$('summary').textContent);}$('sizesLog').textContent=results.join('\n');$('viewport').value=saved;setViewport();$('allSizes').disabled=false;}
+async function allSizes(){focusGame();const saved=$('viewport').value,results=[];$('allSizes').disabled=true;for(const option of $('viewport').options){$('viewport').value=option.value;setViewport();await new Promise(resolve=>{let done=false;const end=()=>{if(!done){done=true;resolve();}};frame.contentWindow.requestAnimationFrame(()=>frame.contentWindow.requestAnimationFrame(end));setTimeout(end,3500);});run();results.push(option.textContent+': '+$('summary').textContent+[...$('checks').querySelectorAll('.fail,.warn')].map(icon=>' '+icon.parentElement.textContent).join('')); }$('sizesLog').textContent=results.join('\n');$('viewport').value=saved;setViewport();$('allSizes').disabled=false;}
 $('allSizes').addEventListener('click',allSizes);
 function gesture(type){const win=frame.contentWindow,doc=frame.contentDocument,r=doc.getElementById('coreTarget').getBoundingClientRect();doc.getElementById('stage').dispatchEvent(new win.PointerEvent(type,{pointerId:91,isPrimary:true,button:0,clientX:r.x+r.width/2,clientY:r.y+r.height/2,bubbles:true}));}
 async function tapTest(){gesture('pointerdown');await delay(65);gesture('pointerup');}
