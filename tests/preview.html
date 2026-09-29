@@ -234,7 +234,7 @@ async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.
   const armed=[];for(const p of points){const before=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);gestureAt('pointerdown',p.x,p.y);await delay(10);gestureAt('pointerup',p.x,p.y);const after=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);if(after>before)armed.push(p);if(armed.length===3)break;}
   if(armed.length<3)throw Error('Three distinct fragments were not armed: '+armed.length);
   log.textContent='TIME LOCK 中 · 3 星片を選択 · TIME '+time+' · 再始動待ち';
-  await delay(Math.max(0,Number(doc.getElementById('timeLockValue').textContent)*1000)+300);const title=doc.getElementById('eventTitle').textContent;
+  const restartDeadline=performance.now()+7000;while(app.classList.contains('time-locked')&&performance.now()<restartDeadline){focusGame();await delay(100);}await delay(100);const title=doc.getElementById('eventTitle').textContent;
   if(title!=='TIME RESTART'||!doc.getElementById('eventSubtitle').textContent.includes('3 PHASES RELEASED'))throw Error('All three phases did not release together');
   log.textContent='PASS · 流星→軌道 · 世界静止（Canvas同一） · 3星片選択 · '+title+' · CHAIN ×'+doc.getElementById('chainValue').textContent+' · TIMER '+time+'→'+doc.getElementById('timeValue').textContent+' · errors '+errors.length;
   run();
