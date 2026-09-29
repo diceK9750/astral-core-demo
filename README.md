@@ -10,11 +10,13 @@
 | 星片をタップ | 即起爆し、CHAINからSCORE／SYNC／COMBO／ENERGYを得る |
 | COREを0.9秒以上長押しして離す | CORE BURSTを1回使い、中心から軌道を横切る起爆波を放つ。1プレイ3回まで。早すぎる解放は消費しない |
 | 素早く2回タップ | NOVA。通常入力との使い分けと3.2秒のクールダウンは継続 |
-| TIME LOCK | 既存のOVERDRIVE解放条件とENERGY消費で実時間5秒だけ世界を止める。停止中に星片を選ぶとARMEDになり、終了時にすべて同時起爆する。ゲームの60秒時計・UNKNOWN SIGNAL・Ghost再生も停止 |
+| TIME LOCK | 既存のOVERDRIVE解放条件とENERGY消費で実時間5秒だけ世界を止める。1プレイ2回まで、使用開始から世界時間14秒の再充填。停止中に星片を選ぶとARMEDになり、終了時にすべて同時起爆する。ゲームの60秒時計・UNKNOWN SIGNAL・Ghost再生も停止 |
 
 新規ChallengeとDailyは`rules=R2`、R2のGhostは`gver=2`を発行します。旧`rules=R1`と`gver=1`のURLは従来の星連鎖・9秒OVERDRIVEで読み込めます。異なるRules Versionの記録は同条件の対戦として混ぜません。共有にはSeedと結果の量子化した61点だけを用い、アカウント・サーバー・端末IDは不要です。
 
 R2 Challenge例: https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R2
+
+R2のSINGULARITYは40秒以降、TIME RESTARTで3個以上を一斉起爆し、その連鎖が未選択の星片へ伝播して8連鎖以上になると発動候補。SYNC 88%以上、COMBO 18以上、良好TAP 10回、成功HOLD 5回、NOVA 5回も必要です。再始動・連鎖・CORE吸収の後に専用演出を表示。
 
 ## 遊び方（以下はR1の詳細。共通の操作・採点要素はR2にも継続）
 画面の光る星をタップすると即座にはじけ、広がった光のリングに触れた星が次々と爆発します。星を直接タップするとそのままゲームが始まります。密集した星や大きい光輪の星を狙い、連鎖を伸ばしてください。中央COREのタップや「同期を始める」でも開始でき、ページ再読み込みなしで再挑戦できます。
