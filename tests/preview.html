@@ -220,16 +220,21 @@ async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.
   await novaCorner();await delay(3300);await novaCorner();
   for(let i=0;i<20&&doc.getElementById('overdrive').disabled;i++){await holdCorner();await delay(120);log.textContent='TIME LOCK 解放条件を準備中 · HOLD '+(i+1)+' / 20 · SYNC '+doc.getElementById('syncValue').textContent;}
   if(doc.getElementById('overdrive').disabled)throw Error('TIME LOCK was never ready');
+  // Observe persistent satellites for thirty world seconds before the lock.
+  while(60*(1-Number(app.style.getPropertyValue('--time')))<30)await delay(100);
   const f=new OrbitalField('A7F291C8'),worldTime=60*(1-Number(app.style.getPropertyValue('--time')));f.update(worldTime,geo,()=>{});
   const candidates=f.stars.filter(s=>s.alive&&s.state==='ORBIT');
   doc.getElementById('overdrive').click();await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
   if(!app.classList.contains('time-locked'))throw Error('TIME LOCK did not start');
   const frozen=doc.getElementById('scene').toDataURL(),time=doc.getElementById('timeValue').textContent;
   await delay(350);const following=doc.getElementById('scene').toDataURL(),later=doc.getElementById('timeValue').textContent;if(following!==frozen||later!==time)throw Error('World or timer moved during lock: canvas '+(following===frozen?'same':'DIFFERENT')+' ('+frozen.length+'→'+following.length+'), TIME '+time+'→'+later+', lock '+doc.getElementById('timeLockValue').textContent);
-  const armed=[];for(const star of candidates){const p=f.point(star,geo);if(armed.some(q=>Math.hypot(q.x-p.x,q.y-p.y)<48))continue;const before=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);gestureAt('pointerdown',p.x,p.y);await delay(55);gestureAt('pointerup',p.x,p.y);const after=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);if(after>before)armed.push(p);if(armed.length===3)break;}
+  // Preparation NOVAs may have removed seeded candidates; count actual HUD confirmations.
+  const points=candidates.map(star=>f.point(star,geo));
+  for(let y=geo.top+15;y<=geo.bottom;y+=40)for(let x=27;x<=W-27;x+=40)points.push({x,y});
+  const armed=[];for(const p of points){const before=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);gestureAt('pointerdown',p.x,p.y);await delay(10);gestureAt('pointerup',p.x,p.y);const after=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);if(after>before)armed.push(p);if(armed.length===3)break;}
   if(armed.length<3)throw Error('Three distinct fragments were not armed: '+armed.length);
   log.textContent='TIME LOCK 中 · 3 星片を選択 · TIME '+time+' · 再始動待ち';
-  await delay(4900);const title=doc.getElementById('eventTitle').textContent;
+  await delay(Math.max(0,Number(doc.getElementById('timeLockValue').textContent)*1000)+300);const title=doc.getElementById('eventTitle').textContent;
   if(title!=='TIME RESTART'||!doc.getElementById('eventSubtitle').textContent.includes('3 PHASES RELEASED'))throw Error('All three phases did not release together');
   log.textContent='PASS · 流星→軌道 · 世界静止（Canvas同一） · 3星片選択 · '+title+' · CHAIN ×'+doc.getElementById('chainValue').textContent+' · TIMER '+time+'→'+doc.getElementById('timeValue').textContent+' · errors '+errors.length;
   run();
