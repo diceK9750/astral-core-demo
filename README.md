@@ -20,7 +20,7 @@ CHAIN COMPILERは天体タップ、BURST SOLVERは既存CORE BURST、PHASE ANCHO
 
 これはブラウザ内で動く決定的な協調サブルーチンです。LLM、学習済み生成モデル、外部API、SDK、オンライン通信は使用していません。設計上の参考は、OpenAI Agents SDKの[Tools](https://openai.github.io/openai-agents-python/tools/)・[Handoffs](https://openai.github.io/openai-agents-python/handoffs/)・[Tracing](https://openai.github.io/openai-agents-python/tracing/)にある役割分担と観測可能な実行経路、およびGoogle DeepMindの[Genie 3原典](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/)にある行動に応じた環境変化のシミュレーションです。これらの製品やモデルを実行しているという意味ではありません。
 
-`tests/agentic.cjs`の105検査で世界の非変更、PRNG再現、同じ刻みでの投影と実結果、ツールの使用条件、決定性、履歴上限、公平な固定重み、予測処理量、MODEL操作・保存失敗・VOID指示・既存モードとの互換を検証します。従来の553検査も継続し、合計658検査です。実機の描画速度・音・触覚と、公開版の表示は別途確認します。
+`tests/agentic.cjs`の106検査で世界の非変更、PRNG再現、同じ刻みでの投影と実結果、ツールの使用条件、決定性、履歴上限、公平な固定重み、予測処理量、MODEL操作・保存失敗・VOID指示・既存モードとの互換を検証します。従来の553検査も継続し、合計659検査です。実機の描画速度・音・触覚と、公開版の表示は別途確認します。
 
 ## 現行 R3 / OVER DRIVE & CORE GROWTH（Step 12）
 
