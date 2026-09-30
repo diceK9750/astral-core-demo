@@ -26,7 +26,7 @@
 <label for="testMode">モード<select id="testMode"><option value="normal">NORMAL</option><option value="challenge">CHALLENGE A7F291C8</option><option value="ghost">CAPTURED GHOST</option></select></label><button type="button" class="primary" id="run">Run checks</button>
 <button type="button" id="measure">180 frames を計測</button>
 <label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">成長プレイを検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="cadence">タップ間隔を検証</button><button type="button" id="reload">起動からやり直す</button>
-<button type="button" id="agenticTrial">WORLD MODEL・Agent・予測検証</button><button type="button" id="orbitTrial">R2 軌道・OVER DRIVE 検証</button><button type="button" id="galaxyTrial">R3 成長・OVER DRIVE 検証</button>
+<button type="button" id="burstModelTrial">BURST SOLVER 検証</button><button type="button" id="agenticTrial">WORLD MODEL・Agent・予測検証</button><button type="button" id="orbitTrial">R2 軌道・OVER DRIVE 検証</button><button type="button" id="galaxyTrial">R3 成長・OVER DRIVE 検証</button>
 </div>
 <div class="controls"><button type="button" id="captureGhost">結果のGhost URLを取得</button><button type="button" id="openGhost">記録を別ページで対戦</button><label style="flex:1;min-width:250px">Ghost URL<input id="ghostLink" type="url" style="width:100%;min-height:44px;background:#111b2b;color:#cae7ff;border:1px solid #40506a;padding:10px"></label><span id="ghostReadout" class="summary"></span></div>
 <pre id="cadenceLog" class="summary" aria-live="polite"></pre>
@@ -263,7 +263,7 @@ async function waitForecast(timeout=6500){const deadline=performance.now()+timeo
 async function agenticTrial(){const button=$('agenticTrial'),log=$('runLog');button.disabled=true;try{
  $('testMode').value='challenge';const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R3&qa=agentic';await loaded;focusGame();const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(2200);const first=await waitForecast();
  log.textContent='WORLD MODEL · '+first.observed+' BODIES / '+first.evaluated+' FUTURES / '+first.calls+' actual simulations · '+first.best.confidence+' ≈'+first.best.count+' CHAIN';
- if(first.tool!=='CHAIN COMPILER'||first.evaluated<2)throw Error('Parallel candidate comparison not performed');
+ if(first.tool!=='CHAIN COMPILER'||first.evaluated<2)throw Error('Parallel candidate comparison not performed');run();if([...$('checks').querySelectorAll('.fail')].length)throw Error('Forecast HUD layout failed');
  const w=worldSnapshot(),target=w.active.find(s=>s.id===first.best.targetId);if(!target)throw Error('Best path target no longer exists');const r=doc.getElementById('app').getBoundingClientRect();gestureAt('pointerdown',r.left+target.x,r.top+target.y);await delay(35);gestureAt('pointerup',r.left+target.x,r.top+target.y);await delay(1600);
  while(doc.getElementById('overdrive').disabled){if(doc.getElementById('overdriveSub').textContent.includes('集まる'))await delay(650);else{await starTap();await delay(620);}const w=worldSnapshot();log.textContent='候補から実起爆 → CORE '+doc.getElementById('growthStage').textContent+' / 成長 '+w.growth.toFixed(1)+' · '+modelSnapshot().roles.join(' + ');if(w.elapsed>50)throw Error('OVER DRIVE not ready');}
  // Forecast CORE BURST without causing or spending the real ability.
@@ -275,6 +275,10 @@ async function agenticTrial(){const button=$('agenticTrial'),log=$('runLog');but
  log.textContent='PASS · WORLD MODEL / 複数候補 / '+first.calls+' simulations / BEST PATH / '+latest.roles.length+' AGENTS / PHASE ANCHOR / ARMED再解析 / 世界静止 / 一斉起爆 · max AI work '+latest.maxWork.toFixed(2)+'ms · errors '+errors.length;run();
  }catch(e){log.textContent='FAIL · '+e.stack;}finally{button.disabled=false;}}
 $('agenticTrial').addEventListener('click',agenticTrial);
+
+async function burstModelTrial(){const button=$('burstModelTrial'),log=$('runLog');button.disabled=true;try{const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?qa=burst-model';await loaded;focusGame();const doc=frame.contentDocument;doc.getElementById('connect').click();const a=doc.getElementById('coreTarget').getBoundingClientRect(),start=performance.now(),x=a.x+a.width/2,y=a.y+a.height/2;gestureAt('pointerdown',x,y);await delay(850);let m=modelSnapshot();if(!m.done){await delay(120);m=modelSnapshot();}if(m.tool!=='BURST SOLVER'||m.calls<1)throw Error('CORE hold did not call the real burst forecast');if(!doc.getElementById('burstCells').getAttribute('aria-label').includes('3回'))throw Error('Forecast spent a live CORE BURST');log.textContent='BURST SOLVER · '+m.calls+' simulations / ≈'+(m.best?.count||0)+' CHAIN · 3 CORE BURSTS unchanged';run();if([...$('checks').querySelectorAll('.fail')].length)throw Error('Burst forecast layout failed');await delay(Math.max(0,1100-(performance.now()-start)));gestureAt('pointerup',x,y);await delay(600);if(!doc.getElementById('burstCells').getAttribute('aria-label').includes('2回'))throw Error('Human release did not execute the real CORE BURST');log.textContent='PASS · BURST SOLVER '+m.calls+' simulations → human RELEASE → CORE BURST · cells 3→2 · errors '+errors.length;run();}catch(e){log.textContent='FAIL · '+e.stack;}finally{button.disabled=false;}}
+$('burstModelTrial').addEventListener('click',burstModelTrial);
+
 
 
 $('play').addEventListener('click',async()=>{

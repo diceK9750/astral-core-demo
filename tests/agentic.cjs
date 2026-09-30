@@ -64,7 +64,7 @@ const snapshot=e=>JSON.parse(e.el.modelSnapshot.textContent),worldView=e=>JSON.p
 async function ui(){
  const e=environment({search:'?qa=agentic',audioAvailable:false});await e.advance(2000);ok(!e.el.connect.hidden&&worldView(e).elapsed===0&&Number(e.el.syncValue.textContent)===0,'Intro projection never starts gameplay or grants score');
  e.el.connect.fire('click');await e.advance(1750);let s=snapshot(e);
- ok(s.uses===2&&s.observed>0&&s.done&&s.best,'First-run automatic projection observes and evaluates an actual world');
+ ok(e.el.modelSlots.textContent==='◇ 2','Remaining prediction slots are visible without hover');ok(s.uses===2&&s.observed>0&&s.done&&s.best,'First-run automatic projection observes and evaluates an actual world');
  ok(!e.el.modelPanel.hidden&&e.el.modelTitle.textContent.includes('BEST PATH')&&e.el.modelTool.textContent==='CHAIN COMPILER','A completed projection exposes its path confidence and real tool');
  ok(e.el.modelStats.textContent.includes('BODIES')&&e.el.modelStats.textContent.includes('FUTURES')&&e.el.modelEstimate.textContent.includes('CHAIN'),'HUD statistics come from observed bodies and completed candidate futures');
  ok(Number(e.el.syncValue.textContent)===0&&Number(e.el.energyValue.textContent)===0&&worldView(e).growth===0&&worldView(e).waves===0,'Automatic forecast cannot ignite, grow or score the live world');
