@@ -25,15 +25,15 @@
 </select></label>
 <label for="testMode">モード<select id="testMode"><option value="normal">NORMAL</option><option value="challenge">CHALLENGE A7F291C8</option><option value="ghost">CAPTURED GHOST</option></select></label><button type="button" class="primary" id="run">Run checks</button>
 <button type="button" id="measure">180 frames を計測</button>
-<label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">上級操作を60秒検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="cadence">タップ間隔を検証</button><button type="button" id="reload">起動からやり直す</button>
-<button type="button" id="orbitTrial">R2 軌道・TIME LOCK 検証</button>
+<label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">成長プレイを検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="cadence">タップ間隔を検証</button><button type="button" id="reload">起動からやり直す</button>
+<button type="button" id="orbitTrial">R2 軌道・OVER DRIVE 検証</button><button type="button" id="galaxyTrial">R3 成長・OVER DRIVE 検証</button>
 </div>
 <div class="controls"><button type="button" id="captureGhost">結果のGhost URLを取得</button><button type="button" id="openGhost">記録を別ページで対戦</button><label style="flex:1;min-width:250px">Ghost URL<input id="ghostLink" type="url" style="width:100%;min-height:44px;background:#111b2b;color:#cae7ff;border:1px solid #40506a;padding:10px"></label><span id="ghostReadout" class="summary"></span></div>
 <pre id="cadenceLog" class="summary" aria-live="polite"></pre>
 <div class="layout">
 <section class="preview-area" aria-label="デモの表示領域">
 <div id="readout" class="viewport-readout"></div>
-<div id="frameWrap" class="frame-wrap"><iframe id="demo" title="ASTRAL CORE interactive demo" allow="autoplay" src="../index.html"></iframe></div>
+<div id="frameWrap" class="frame-wrap"><iframe id="demo" title="ASTRAL CORE interactive demo" allow="autoplay" src="../index.html?qa=preview"></iframe></div>
 </section>
 <section class="results" aria-label="検証結果">
 <h2>Run verification</h2><pre id="runLog" class="summary" style="white-space:pre-wrap">待機中</pre><pre id="sizesLog" class="summary" style="white-space:pre-wrap"></pre><h2>Layout checks</h2>
@@ -44,7 +44,7 @@
 <h2 style="margin-top:20px">Runtime errors</h2>
 <div id="errors" class="error-log" role="log">読み込み完了後の例外を監視します。</div>
 <h2 style="margin-top:20px">Frame timing</h2>
-<div id="performance" class="summary" aria-live="polite">通常時または OVERDRIVE 中に「180 frames を計測」を押してください。</div>
+<div id="performance" class="summary" aria-live="polite">通常時または OVER DRIVE 中に「180 frames を計測」を押してください。</div>
 <p class="note">1 秒の準備時間後、180 回の requestAnimationFrame 間隔を観測します。このブラウザ環境の結果であり、端末実機の FPS を保証しません。計測中もデモを操作できます。</p>
 <p class="note">この検査はレイアウトと読み込み完了後の未処理例外を観測します。起動前の例外・console.error・音の品質・フレームレート・実機の safe-area は、ブラウザ検証で別途確認してください。寸法検査は実機エミュレーションではありません。操作シナリオは合成PointerEventを使用します。</p>
 </section>
@@ -96,7 +96,7 @@ function showErrors(){ $('errors').textContent=errors.length?errors.join('\n\n')
 function measure(){
  if(!loaded){$('performance').textContent='先にデモの読み込みを完了してください。';return;}
  cancelMeasurement();
- const win=frame.contentWindow,doc=frame.contentDocument,mode=()=>doc.getElementById('overdrive').getAttribute('aria-pressed')==='true'?'OVERDRIVE':'NORMAL',initialMode=mode(),initialSize=width+' × '+height;
+ const win=frame.contentWindow,doc=frame.contentDocument,mode=()=>doc.getElementById('overdrive').getAttribute('aria-pressed')==='true'?'OVER DRIVE':'NORMAL',initialMode=mode(),initialSize=width+' × '+height;
  let request=0,observer=null,start=null,previous=null,finished=false,longTasks=0,longDuration=0,monitoring=false,callbacks=0;
  const intervals=[];
  const startedAt=performance.now(),visibility=()=>'visibility: page '+document.visibilityState+' / iframe '+doc.visibilityState;
@@ -146,7 +146,7 @@ function run(){
  }
  clearLayoutWait();
  const checks=[],introActive=demoApp?!demoApp.classList.contains('connected'):!doc.getElementById('connect')?.hidden;
- $('phase').textContent=introActive?'現在：接続前。デモを操作して、接続後も再検査してください。':'現在：デモ画面。長押し・NOVA・OVERDRIVE は下の画面で操作できます。';
+ $('phase').textContent=introActive?'現在：接続前。デモを操作して、接続後も再検査してください。':'現在：デモ画面。長押し・NOVA・OVER DRIVE は下の画面で操作できます。';
  checks.push(check(win.innerWidth===width&&win.innerHeight===height,'内部ビューポート',win.innerWidth+' × '+win.innerHeight+' px / 指定 '+width+' × '+height+' px'));
  const sw=Math.max(doc.documentElement.scrollWidth,doc.body.scrollWidth),sh=Math.max(doc.documentElement.scrollHeight,doc.body.scrollHeight);
  checks.push(check(sw<=width+1&&sh<=height+1,'ページのはみ出し',sw+' × '+sh+' px / 表示領域 '+width+' × '+height+' px'));
@@ -218,22 +218,22 @@ async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.
   async function novaCorner(){gestureAt('pointerdown',corner.x,corner.y);await delay(65);gestureAt('pointerup',corner.x,corner.y);await delay(90);gestureAt('pointerdown',corner.x,corner.y);await delay(65);gestureAt('pointerup',corner.x,corner.y);}
   for(let i=0;i<5;i++){gestureAt('pointerdown',corner.x,corner.y);await delay(65);gestureAt('pointerup',corner.x,corner.y);await delay(340);}
   await novaCorner();await delay(3300);await novaCorner();
-  for(let i=0;i<20&&doc.getElementById('overdrive').disabled;i++){await holdCorner();await delay(120);log.textContent='TIME LOCK 解放条件を準備中 · HOLD '+(i+1)+' / 20 · SYNC '+doc.getElementById('syncValue').textContent;}
-  if(doc.getElementById('overdrive').disabled)throw Error('TIME LOCK was never ready');
+  for(let i=0;i<20&&doc.getElementById('overdrive').disabled;i++){await holdCorner();await delay(120);log.textContent='OVER DRIVE 解放条件を準備中 · HOLD '+(i+1)+' / 20 · SYNC '+doc.getElementById('syncValue').textContent;}
+  if(doc.getElementById('overdrive').disabled)throw Error('OVER DRIVE was never ready');
   // Observe persistent satellites for thirty world seconds before the lock.
   while(60*(1-Number(app.style.getPropertyValue('--time')))<30)await delay(100);
   const f=new OrbitalField('A7F291C8'),worldTime=60*(1-Number(app.style.getPropertyValue('--time')));f.update(worldTime,geo,()=>{});
   const candidates=f.stars.filter(s=>s.alive&&s.state==='ORBIT');
   doc.getElementById('overdrive').click();await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));
-  if(!app.classList.contains('time-locked'))throw Error('TIME LOCK did not start');
+  if(!app.classList.contains('time-locked'))throw Error('OVER DRIVE did not start');
   const frozen=doc.getElementById('scene').toDataURL(),time=doc.getElementById('timeValue').textContent;
   await delay(350);const following=doc.getElementById('scene').toDataURL(),later=doc.getElementById('timeValue').textContent;if(following!==frozen||later!==time)throw Error('World or timer moved during lock: canvas '+(following===frozen?'same':'DIFFERENT')+' ('+frozen.length+'→'+following.length+'), TIME '+time+'→'+later+', lock '+doc.getElementById('timeLockValue').textContent);
   // Preparation NOVAs may have removed seeded candidates; count actual HUD confirmations.
   const points=candidates.map(star=>f.point(star,geo));
   for(let y=geo.top+15;y<=geo.bottom;y+=40)for(let x=27;x<=W-27;x+=40)points.push({x,y});
-  const armed=[];for(const p of points){const before=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);gestureAt('pointerdown',p.x,p.y);await delay(10);gestureAt('pointerup',p.x,p.y);const after=Number(doc.getElementById('coreStatus').textContent.match(/ARMED (\d+)/)?.[1]||0);if(after>before)armed.push(p);if(armed.length===3)break;}
+  const armed=[];for(const p of points){const before=Number(doc.getElementById('coreStatus').textContent.match(/SELECT STARS · (\d+)/)?.[1]||0);gestureAt('pointerdown',p.x,p.y);await delay(10);gestureAt('pointerup',p.x,p.y);const after=Number(doc.getElementById('coreStatus').textContent.match(/SELECT STARS · (\d+)/)?.[1]||0);if(after>before)armed.push(p);if(armed.length===3)break;}
   if(armed.length<3)throw Error('Three distinct fragments were not armed: '+armed.length);
-  log.textContent='TIME LOCK 中 · 3 星片を選択 · TIME '+time+' · 再始動待ち';
+  log.textContent='OVER DRIVE 中 · 3 星片を選択 · TIME '+time+' · 再始動待ち';
   const restartDeadline=performance.now()+7000;while(app.classList.contains('time-locked')&&performance.now()<restartDeadline){focusGame();await delay(100);}await delay(100);const title=doc.getElementById('eventTitle').textContent;
   if(title!=='TIME RESTART'||!doc.getElementById('eventSubtitle').textContent.includes('3 PHASES RELEASED'))throw Error('All three phases did not release together');
   log.textContent='PASS · 流星→軌道 · 世界静止（Canvas同一） · 3星片選択 · '+title+' · CHAIN ×'+doc.getElementById('chainValue').textContent+' · TIMER '+time+'→'+doc.getElementById('timeValue').textContent+' · errors '+errors.length;
@@ -251,22 +251,28 @@ $('cadence').addEventListener('click',async()=>{
   rows.push(interval+'ms ×5: '+samples.map(s=>s.delta>0?'+'+s.delta:'MISS').join(' / ')+' · NOVA '+samples.some(s=>s.feedback==='N O V A'||s.feedback==='SYNC CHAIN')+' · '+(samples.every(s=>s.delta>0)?'PASS':'FAIL'));log.textContent=rows.join('\n');
  }run();}catch(e){log.textContent+='\nFAIL: '+e.message;}finally{button.disabled=false;}
 });
+function worldSnapshot(){try{return JSON.parse(frame.contentDocument.getElementById('worldSnapshot').textContent);}catch(_){return null;}}
+async function starTap(){const doc=frame.contentDocument,world=worldSnapshot();if(!world?.active?.length){await tapTest();return;}const points=world.active.filter(s=>s.state!=='ARMED'),r=doc.getElementById('app').getBoundingClientRect();let best=points[0],density=-1;for(const p of points){const n=points.filter(q=>Math.hypot(p.x-q.x,p.y-q.y)<75).length;if(n>density){density=n;best=p;}}if(!best)return;focusGame();gestureAt('pointerdown',r.left+best.x,r.top+best.y);await delay(45);gestureAt('pointerup',r.left+best.x,r.top+best.y);}
+async function selectArmed(count){const doc=frame.contentDocument;await delay(120);for(let i=0;i<count;i++){const world=worldSnapshot(),p=world?.active?.find(s=>s.state!=='ARMED');if(!p)break;const r=doc.getElementById('app').getBoundingClientRect();gestureAt('pointerdown',r.left+p.x,r.top+p.y);await delay(40);gestureAt('pointerup',r.left+p.x,r.top+p.y);await delay(140);}}
+async function galaxyTrial(){const button=$('galaxyTrial'),log=$('runLog');button.disabled=true;try{$('testMode').value='challenge';const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R3&qa=galaxy';await loaded;focusGame();const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(200);const initial=worldSnapshot();log.textContent='R3 小CORE開始 · scale '+initial.scale.toFixed(2);while(doc.getElementById('overdrive').disabled){if(doc.getElementById('overdriveSub').textContent.includes('集まる'))await delay(650);else{await starTap();await delay(620);}const w=worldSnapshot();log.textContent='連鎖吸収 · CORE '+doc.getElementById('growthStage').textContent+' / 成長 '+w.growth.toFixed(1)+' / 延長 +'+w.bonus+'s';if(w.elapsed>50)throw Error('OVER DRIVE not ready');}log.textContent='OVER DRIVE READY · 時間停止 → 星を選択 → 一斉起爆';doc.getElementById('overdrive').click();await new Promise(resolve=>frame.contentWindow.requestAnimationFrame(()=>frame.contentWindow.requestAnimationFrame(resolve)));const frozen=doc.getElementById('scene').toDataURL(),elapsed=worldSnapshot().elapsed;await delay(350);if(frozen!==doc.getElementById('scene').toDataURL()||elapsed!==worldSnapshot().elapsed)throw Error('World moved during OVER DRIVE');await selectArmed(3);if(!doc.getElementById('armedCount').textContent.includes('3 SELECTED'))throw Error('Three selections not confirmed');log.textContent='OVER DRIVE / SELECT STARS · 3 SELECTED · Canvas同一・タイマー停止';while(doc.getElementById('app').classList.contains('time-locked')){focusGame();await delay(120);}await delay(100);if(!doc.getElementById('eventSubtitle').textContent.includes('3 PHASES RELEASED'))throw Error('Simultaneous restart not confirmed');log.textContent='PASS · 小CORE→連鎖成長 · 時間延長 · READY誘導 · 世界静止 · 3選択 · 同時起爆 · errors '+errors.length;run();}catch(e){log.textContent='FAIL · '+e.message;}finally{button.disabled=false;}}
+$('galaxyTrial').addEventListener('click',galaxyTrial);
+
 $('play').addEventListener('click',async()=>{
  $('play').disabled=true;const doc=frame.contentDocument;focusGame();if(visible(doc.getElementById('result')))doc.getElementById('reconnect').click();else if(visible(doc.getElementById('connect')))doc.getElementById('connect').click();
  const start=performance.now();let cycles=0,overtakes=0,lastLead='';const duel=doc.getElementById('app').classList.contains('duel'),casual=$('pilot').value==='casual';const watch=new MutationObserver(()=>{const lead=doc.getElementById('stageMode').textContent;if(lead==='OVERTAKE'&&lastLead!==lead)overtakes++;lastLead=lead;});watch.observe(doc.getElementById('stageMode'),{childList:true,subtree:true,characterData:true});if(duel)await delay(3000);const remote=doc.getElementById('app').classList.contains('remote');
- try{while(performance.now()-start<90000&&!visible(doc.getElementById('result'))){
+ try{while(performance.now()-start<115000&&!visible(doc.getElementById('result'))){
  if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();
- if(casual){await tapTest();await delay(570);}else if(remote){const banner=doc.getElementById('signalBanner'),kind=doc.getElementById('signalType').textContent;
- if(visible(banner)&&!banner.classList.contains('solved')){if(kind.includes('VOID'))await delay(220);else if(kind.includes('PHASE SHIFT')){await holdTest();await delay(360);}else if(kind.includes('OVERLOAD')){if(doc.getElementById('coreStatus').textContent==='NOVA READY'){await novaTest();await delay(370);}else await delay(200);}else if(kind.includes('JAM')){await tapTest();await delay(550);}else if(kind.includes('PULSE')){if(banner.classList.contains('beat')){await tapTest();await delay(400);}else await delay(40);}}
- else {const action=cycles%4;if(action===2)await holdTest();else if(action===3)await novaTest();else await tapTest();await delay(action===2?370:550);}
- }else{await tapTest();await delay(530);await tapTest();await delay(530);await holdTest();await delay(370);await novaTest();await delay(600);}
- const drive=doc.getElementById('overdrive');if(!drive.disabled&&!drive.hidden)drive.click();cycles++;
+ if(casual){await starTap();await delay(570);}else if(remote){const banner=doc.getElementById('signalBanner'),kind=doc.getElementById('signalType').textContent;
+ if(visible(banner)&&!banner.classList.contains('solved')){if(kind.includes('VOID'))await delay(220);else if(kind.includes('PHASE SHIFT')){await holdTest();await delay(360);}else if(kind.includes('OVERLOAD')){if(doc.getElementById('coreStatus').textContent.includes('NOVA READY')){await novaTest();await delay(370);}else await delay(200);}else if(kind.includes('JAM')){await tapTest();await delay(550);}else if(kind.includes('PULSE')){if(banner.classList.contains('beat')){await tapTest();await delay(400);}else await delay(40);}}
+ else {const action=cycles%4;if(action===2)await holdTest();else if(action===3)await novaTest();else await starTap();await delay(action===2?370:550);}
+ }else{await starTap();await delay(530);await starTap();await delay(530);await holdTest();await delay(370);await novaTest();await delay(600);}
+ const drive=doc.getElementById('overdrive');if(!drive.disabled&&!drive.hidden){drive.click();await selectArmed(3);}cycles++;
  $('runLog').textContent='実ブラウザ／合成ポインター検証中 '+((performance.now()-start)/1000).toFixed(1)+'s / '+cycles+' cycles\nTIME '+doc.getElementById('timeValue').textContent+' / SYNC '+doc.getElementById('syncValue').textContent+' / COMBO '+doc.getElementById('comboValue').textContent+(duel?' / RIVAL '+doc.getElementById('rivalScore').textContent+' / DELTA '+doc.getElementById('duelDelta').textContent+' / OVERTAKES '+overtakes:'');
  }
- await delay(1200);run();$('runLog').textContent='60秒シナリオ完了（合成ポインター。実機ではありません）\n'+doc.getElementById('resultRank').textContent+' / '+doc.getElementById('resultName').textContent+' / SYNC '+doc.getElementById('resultSync').textContent+'%\nMAX COMBO '+doc.getElementById('resultCombo').textContent+' / NOVA '+doc.getElementById('resultNova').textContent+' / '+doc.getElementById('resultDrive').textContent+'\nSCORE '+doc.getElementById('resultScore').textContent+' / '+doc.getElementById('resultDelta').textContent+(duel?'\n'+doc.getElementById('duelOutcome').textContent+' / '+doc.getElementById('duelFinalDelta').textContent+' / OVERTAKES '+overtakes:'')+'\nRESULT visible: '+visible(doc.getElementById('result'))+' / errors: '+errors.length;
+ await delay(1200);run();$('runLog').textContent='60秒シナリオ完了（合成ポインター。実機ではありません）\n'+doc.getElementById('resultRank').textContent+' / '+doc.getElementById('resultName').textContent+' / SYNC '+doc.getElementById('resultSync').textContent+'%\nMAX COMBO '+doc.getElementById('resultCombo').textContent+' / NOVA '+doc.getElementById('resultNova').textContent+' / '+doc.getElementById('resultDrive').textContent+'\n'+doc.getElementById('galaxyResult').textContent+'\nSCORE '+doc.getElementById('resultScore').textContent+' / '+doc.getElementById('resultDelta').textContent+(duel?'\n'+doc.getElementById('duelOutcome').textContent+' / '+doc.getElementById('duelFinalDelta').textContent+' / OVERTAKES '+overtakes:'')+'\nRESULT visible: '+visible(doc.getElementById('result'))+' / errors: '+errors.length;
  }catch(e){$('runLog').textContent='FAIL: '+e.stack;}finally{watch.disconnect();$('play').disabled=false;}
 });
-$('viewport').addEventListener('change',()=>{cancelMeasurement();setViewport();});$('run').addEventListener('click',run);$('measure').addEventListener('click',measure);$('reload').addEventListener('click',()=>{cancelMeasurement();clearLayoutWait();loaded=false;errors=[];$('summary').textContent='再読み込み中…';frame.src=$('testMode').value==='ghost'&&$('ghostLink').value?$('ghostLink').value:'../index.html?qa='+Date.now()+($('testMode').value==='challenge'?'&challenge=A7F291C8&rules=R2':'');});
+$('viewport').addEventListener('change',()=>{cancelMeasurement();setViewport();});$('run').addEventListener('click',run);$('measure').addEventListener('click',measure);$('reload').addEventListener('click',()=>{cancelMeasurement();clearLayoutWait();loaded=false;errors=[];$('summary').textContent='再読み込み中…';frame.src=$('testMode').value==='ghost'&&$('ghostLink').value?$('ghostLink').value:'../index.html?qa='+Date.now()+($('testMode').value==='challenge'?'&challenge=A7F291C8&rules=R3':'');});
 $('testMode').addEventListener('change',()=>{$('reload').click();});
 $('captureGhost').addEventListener('click',()=>{const doc=frame.contentDocument;if(!visible(doc.getElementById('result'))){$('ghostReadout').textContent='先にChallengeを60秒プレイしてください。';return;}doc.getElementById('shareChallenge').click();const url=doc.getElementById('shareUrl').value;if(!url.includes('ghost=')){$('ghostReadout').textContent='Ghost未生成。Challenge結果から取得してください。';return;}$('ghostLink').value=url;$('ghostReadout').textContent=url.length+'文字 / 実プレイの記録';});
 $('openGhost').addEventListener('click',()=>{try{const url=new URL($('ghostLink').value);if(url.origin!==location.origin||!url.searchParams.has('ghost')||url.href.length>=1000)throw Error('Invalid URL');$('testMode').value='ghost';$('pilot').value='full';$('reload').click();$('ghostReadout').textContent='新しいページ状態で記録を読み込み中。';}catch(_){$('ghostReadout').textContent='有効な公開Ghost URLを入力してください。';}});

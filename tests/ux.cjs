@@ -9,7 +9,7 @@ let count=0;
 function ok(value,message){assert.ok(value,message);count++;console.log('PASS '+message);}
 async function run(){
  const e=environment({audioAvailable:false});
- ok(/60秒で SYNC 100%/.test(e.el.heroTitle.textContent),'Opening names the 60-second SYNC goal');
+ ok(/宇宙を育てる/.test(e.el.heroTitle.textContent)&&/60秒/.test(e.el.heroSub.textContent),'Opening names cosmic growth and the 60-second start');
  ok(/タップ/.test(e.el.heroSub.textContent)&&/TAP[\s\S]*HOLD[\s\S]*NOVA/.test(html.match(/<p class="hint" id="hint">([^]*?)<\/p>/)[1]),'Core action and all three gesture symbols appear without a help screen');
  ok(html.includes('自分の限界へ')&&html.includes('同じ信号で競う'),'Both mode choices explain their purpose');
  e.el.connect.fire('click');await e.advance(100);
@@ -53,14 +53,14 @@ async function run(){
  const ghost=environment({search:'?challenge=A7F291C8',audioAvailable:false});
  ok(!ghost.el.app.classList.contains('duel'),'Ordinary Challenge has no ghost display');
  ok(html.includes('友人の記録を追い越せ。')&&html.includes('YOU vs RIVAL'),'Valid ghost prestart copy identifies the archived rival and objective');
- const drive=environment({audioAvailable:false});drive.el.connect.fire('click');
+ const drive=environment({search:'?challenge=A7F291C8&rules=R2',audioAvailable:false});drive.el.connect.fire('click');
  for(let i=0;i<4;i++){await drive.tap();await drive.advance(480);}
  for(let i=0;i<2;i++){await drive.tap();await drive.advance(85);await drive.tap();await drive.advance(3300,250);}
  let sawReadyPulse=false;for(let i=0;i<16;i++){drive.pointer('pointerdown');await drive.advance(1080,250);drive.pointer('pointerup');await drive.advance(110);sawReadyPulse ||= drive.el.app.classList.contains('drive-ready');}
- ok(!drive.el.overdrive.disabled&&drive.el.overdriveLabel.textContent==='TIME LOCK READY'&&drive.el.overdriveSub.textContent==='いま解放','Qualifying inputs reveal an actionable TIME LOCK READY button');
+ ok(!drive.el.overdrive.disabled&&drive.el.overdriveLabel.textContent==='OVER DRIVE READY'&&drive.el.overdriveSub.textContent==='タップで時間を止める','Qualifying inputs reveal an actionable OVER DRIVE READY button');
  ok(sawReadyPulse,'Ready state gives one brief button pulse');
- await drive.advance(1250,250);ok(!drive.el.app.classList.contains('drive-ready')&&!drive.el.overdrive.disabled,'Ready pulse ends without blinking while the button stays usable');
- drive.el.overdrive.fire('click');ok(drive.el.overdriveLabel.textContent==='TIME LOCK','One press engages TIME LOCK');
+ await drive.advance(3000,250);ok(!drive.el.app.classList.contains('drive-ready')&&!drive.el.overdrive.disabled,'Ready pulse ends without blinking while the button stays usable');
+ drive.el.overdrive.fire('click');ok(drive.el.overdriveLabel.textContent==='OVER DRIVE','One press engages OVER DRIVE');
  ok(html.includes('touch-action:none')&&html.includes("'contextmenu',e=>e.preventDefault()"),'Double TAP and long press suppress browser gesture interference');
  console.log(`${count} first-play UX checks passed.`);
 }
