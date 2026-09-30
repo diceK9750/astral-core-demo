@@ -1,6 +1,40 @@
-# ASTRAL CORE / REMOTE GHOST DUEL
+# ASTRAL CORE / COSMIC SCALE ASCENSION
 60秒から始め、天体の爆発連鎖で時間を延ばし、小さなCOREを成長させるミニゲーム。
 公開: https://dicek9750.github.io/astral-core-demo/
+
+## COSMIC SCALE ASCENSION（Step 14 / R4）
+
+一つの宇宙成長ゲームへ統合。通常URLは匿名のランダムSeed、共有URLは同じRulesとSeed、DAILYはJST日付Seed、Ghostはその宇宙に記録された相手の成績だけを重ねます。初回の通常プレイからそのままGhostを共有できます。R1〜R3のURLは以前の物理・採点で読み込むため、記録を異なるルールと比較しません。
+
+| 操作 | 実際の効果 |
+| --- | --- |
+| 天体を1回タップ／クリック | 即時の局所起爆。波が届いた天体だけ連鎖 |
+| COREを長押し→離す | CORE IMPULSE。中心から広域波を放つ。3回、0.9〜1.55秒で最適。0.9秒未満・1.8秒超は消費なし |
+| 同じ天体を240ms以内に2回 | GRAVITY NOVA。1回目は即起爆、2回目はその位置を焦点に周囲を0.3秒収束させ、拡大起爆。3.2秒の再充填 |
+| OVER DRIVE | 実時間5秒の静止。選択した天体をARMEDにし、終了時に同時起爆。2回まで |
+
+| CORE | 成長量 | 捕獲質量上限※ | 天体上限 | 流入間隔 | 重力圏 / R |
+| --- | --- | --- | --- | --- | --- |
+| SEED | 0 | 1.3 | 7 | 1.50s | 1.15 |
+| PULSE | 10 | 2.2 | 9 | 1.15s | 1.35 |
+| ORBIT | 28 | 3.4 | 12 | 0.85s | 1.60 |
+| STELLAR | 56 | 5.0 | 15 | 0.65s | 1.85 |
+| NOVA | 98 | 7.0 | 18 | 0.45s | 2.10 |
+
+※質量・サイズはゲーム内の演出単位。実在する天体の質量・半径ではありません。重すぎる天体は曲線軌道で通過し、枠を空けます。捕獲された衛星は年齢で消えません。成長時には重力光路、降着円盤、COREの幾何構造、流入速度が変わります。ORBIT以降は近傍の塵・ガス・小破片を低効率で自動吸収します。連鎖と同時起爆の成長倍率・最大30秒の時間報酬は継続します。
+
+名前付き恒星は24種類。Sirius、Vega、Polaris、Rigel、Betelgeuse、Antares、Aldebaran、Procyon、Arcturus、Capella、Deneb、Altair、Canopus、Achernar、Fomalhaut、Regulus、Spica、Pollux、Castor、Rigil Kentaurus、Acrux、Mimosa、Gacrux、Bellatrix。名称は[IAU WGSNの名称カタログ](https://exopla.net/wp-content/uploads/2025/10/2022_oldIAU-CSN.pdf)に照合しました。描画は各恒星の固有IDに対応するコロナ・光条・円盤・表面アーク・伴星の組合せで、天文学的な外観の正確な再現を主張しません。Seedでシャッフルしたデッキから重複なしで引き、使い切ると無名の恒星になります。サイズは0.8〜2.6の演出倍率です。
+
+WORLD MODELは実際のR4物理を複製して候補を比較し、対象の近くへ予測CHAINと光路を投影します。Agent構造は解析時だけCOREから展開。HUMANが最後の起爆を決めます。外部生成AI/APIは使いません。共有・Daily・Ghostの候補比較重みは固定、匿名通常セッションの補助だけ入力傾向に応じて変わります。
+
+R4 Ghostは `gver=4`。gver=3と同じ61点・1.5秒間隔・60〜90世界秒の圧縮レイアウトを使い、ヘッダーversionでR4へ結び付けます。gver=1/2/3は変更していません。結果のUNIVERSE SIGNATUREは到達段階、実際の捕獲名、最大連鎖、最大宇宙現象、OVER DRIVE回数から生成します。R4のSINGULARITY条件はNOVA段階・10連鎖以上・3個以上の再始動起爆・成功CORE HOLD2回・NOVA3回・SYNC90%以上、SSはSYNC95%以上です。
+
+検証: `node tests/ascension.cjs` と既存11スイート。公開ブラウザQAの「R4 宇宙成長・操作検証」は実時間・合成PointerEventで同一ゲームを操作します。描画・音質・振動・実機Safariはモックテストとは別です。
+
+R4共有例: https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R4
+
+以下は旧ルールの仕様記録です。モード選択UIは現在撤去しています。
+
 ## LOCAL WORLD MODEL（Step 13）
 
 COREを支えるローカル予測系を追加。MODELボタンなどから最大1.5秒先の連鎖を投影し、候補となる天体と光路を短く表示します。結果は既存の操作ヒント枠へ一時表示し、中央COREの面積を維持します。通常の投影枠は1プレイ3回までで、初回と昇格時の自動投影も含みます。OVER DRIVE中の再始動予測は別枠です。既存のR3の物理・採点・Seed・Ghost形式は変更していません。起爆やARMED選択はプレイヤーが行い、予測系が勝手に実行することはありません。
