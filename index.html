@@ -855,8 +855,8 @@ if(raw>.027&&raw<.2)slowTime+=dt;else slowTime=Math.max(0,slowTime-dt*.4);if(slo
 raf=requestAnimationFrame(frame);}
 function tickClock(){$('clock').textContent=new Date().toLocaleTimeString('ja-JP',{timeZone:'Asia/Tokyo',hour12:false})+' JST';}tickClock();let clockTimer=setInterval(tickClock,1000);
 function resumeLoop(){last=0;if(!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
-document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseGame();cancelHold();lastTap=null;if(document.hidden){cancelAnimationFrame(raf);raf=0;sound.suspend();clearInterval(clockTimer);}else{tickClock();clockTimer=setInterval(tickClock,1000);resumeLoop();}});
-addEventListener('pagehide',()=>{pauseGame();clearInterval(clockTimer);cancelHold();cancelAnimationFrame(raf);raf=0;sound.suspend();});addEventListener('pageshow',()=>{clearInterval(clockTimer);if(!document.hidden){tickClock();clockTimer=setInterval(tickClock,1000);}resumeLoop();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){pauseGame();clearModelProjection();}cancelHold();lastTap=null;if(document.hidden){cancelAnimationFrame(raf);raf=0;sound.suspend();clearInterval(clockTimer);}else{tickClock();clockTimer=setInterval(tickClock,1000);resumeLoop();}});
+addEventListener('pagehide',()=>{pauseGame();clearModelProjection();clearInterval(clockTimer);cancelHold();cancelAnimationFrame(raf);raf=0;sound.suspend();});addEventListener('pageshow',()=>{clearInterval(clockTimer);if(!document.hidden){tickClock();clockTimer=setInterval(tickClock,1000);}resumeLoop();});
 function motionChange(e){reduced=e.matches;aim.x=aim.y=aim.tx=aim.ty=0;cancelHold();resize();}if(motion.addEventListener)motion.addEventListener('change',motionChange);else motion.addListener(motionChange);
 syncDrive();resumeLoop();
 })();
