@@ -62,6 +62,13 @@ w=armed(world());const before=json(w),phase=readyAgent(w,{kind:'restart',locked:
 const {environment}=require('./interaction.cjs');
 const snapshot=e=>JSON.parse(e.el.modelSnapshot.textContent),worldView=e=>JSON.parse(e.el.worldSnapshot.textContent);
 async function ui(){
+ const sparse=environment({search:'?challenge='+seed+'&rules=R3&qa=agentic',audioAvailable:false});sparse.el.connect.fire('click');await sparse.advance(2300,200);let sparseModel=snapshot(sparse);
+ ok(sparseModel.done&&sparseModel.evaluated>=2&&sparseModel.calls>=4,'A sparse 5 Hz paint cadence completes real parallel forecasts before they expire');
+ ok(Number(sparse.el.syncValue.textContent)===0&&worldView(sparse).growth===0,'Completing a sparse-frame forecast cannot score or grow the live world');
+ const held=environment({search:'?qa=agentic',audioAvailable:false});held.el.connect.fire('click');await held.advance(40);held.pointer('pointerdown');await held.advance(500);
+ ok(snapshot(held).tool==='BURST SOLVER'&&held.el.burstCells.getAttribute('aria-label').includes('3回'),'A live CORE hold calls BURST SOLVER without spending a real cell');
+ await held.advance(600);ok(snapshot(held).done&&snapshot(held).calls===2,'A held CORE completes both real burst forecast cadences');held.pointer('pointerup');await held.advance(120);
+ ok(held.el.burstCells.getAttribute('aria-label').includes('2回'),'Only the human RELEASE spends the real CORE BURST');
  const e=environment({search:'?qa=agentic',audioAvailable:false});await e.advance(2000);ok(!e.el.connect.hidden&&worldView(e).elapsed===0&&Number(e.el.syncValue.textContent)===0,'Intro projection never starts gameplay or grants score');
  e.el.connect.fire('click');await e.advance(1750);let s=snapshot(e);
  ok(e.el.modelSlots.textContent==='◇ 2','Remaining prediction slots are visible without hover');ok(s.uses===2&&s.observed>0&&s.done&&s.best,'First-run automatic projection observes and evaluates an actual world');
