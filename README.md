@@ -16,7 +16,7 @@ SEED／PULSEではCORE内で計算し、ORBIT到達でSCOUTとSIMULATOR、STELLA
 
 CHAIN COMPILERは天体タップ、BURST SOLVERは既存CORE BURST、PHASE ANCHORはOVER DRIVE中のARMED候補と再始動をそれぞれ投影する専用処理です。新しい起爆能力や加点倍率を作るツールではありません。通常プレイでは直近24件までの操作傾向を候補比較に反映し、Challenge／Daily／Ghostでは固定の比較重みを使います。履歴はそのプレイだけのものです。
 
-投影は「複製した時点の配置で、指定操作だけを行った場合」の条件付き予測です。1/30秒と1/60秒刻みで対象ID・連鎖数・吸収質量・成長・時間報酬が一致した候補はSTABLE、異なる候補はVOLATILEとして扱い、後の入力や連鎖結果を保証しません。有効な枝がなければNO BRANCH。VOID中は「触らない」の操作指示を優先し、通常の投影を開始しません。共有された連鎖グループとPRNG状態も複製し、本体の天体・スコア・生成順を変更せず、処理量を小さなステップへ分割します。OVER DRIVE中は現実の世界を静止させたまま、再始動を仮定した複製世界で評価します。
+投影は「複製した時点の配置で、指定操作だけを行った場合」の条件付き予測です。1/30秒と1/60秒刻みで対象ID・連鎖数・吸収質量・成長・時間報酬が一致した候補はSTABLE、異なる候補はVOLATILEとして扱い、後の入力や連鎖結果を保証しません。有効な枝がなければNO BRANCH。VOID中は「触らない」の操作指示を優先し、通常の投影を開始しません。共有された連鎖グループとPRNG状態も複製し、本体の天体・スコア・生成順を変更せず、処理量を小さなステップへ分割します。描画の合間も約1.8msの予算で計算し、待機タスクは1本だけ。非表示・ポーズ・入力による失効時には停止します。OVER DRIVE中は現実の世界を静止させたまま、再始動を仮定した複製世界で評価します。
 
 これはブラウザ内で動く決定的な協調サブルーチンです。LLM、学習済み生成モデル、外部API、SDK、オンライン通信は使用していません。設計上の参考は、OpenAI Agents SDKの[Tools](https://openai.github.io/openai-agents-python/tools/)・[Handoffs](https://openai.github.io/openai-agents-python/handoffs/)・[Tracing](https://openai.github.io/openai-agents-python/tracing/)にある役割分担と観測可能な実行経路、およびGoogle DeepMindの[Genie 3原典](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/)にある行動に応じた環境変化のシミュレーションです。これらの製品やモデルを実行しているという意味ではありません。
 
