@@ -62,6 +62,7 @@ w=armed(world());const before=json(w),phase=readyAgent(w,{kind:'restart',locked:
 const {environment}=require('./interaction.cjs');
 const snapshot=e=>JSON.parse(e.el.modelSnapshot.textContent),worldView=e=>JSON.parse(e.el.worldSnapshot.textContent);
 async function ui(){
+ for(const event of ['visibilitychange','pagehide']){const ready=environment({search:'?qa=agentic',audioAvailable:false});await ready.advance(600);ready.el.modelButton.fire('click');if(event==='visibilitychange'){ready.doc.hidden=true;ready.doc.fire(event);}else ready.win.fire(event);const stopped=ready.el.modelSnapshot.textContent;ok(ready.timerCount()===0,'Pre-play '+event+' immediately cancels all queued forecast work');await ready.advance(1200);ok(ready.el.modelSnapshot.textContent===stopped,'Pre-play '+event+' cannot continue simulation or hidden DOM updates');}
  const sparse=environment({search:'?challenge='+seed+'&rules=R3&qa=agentic',audioAvailable:false});sparse.el.connect.fire('click');await sparse.advance(2300,200);let sparseModel=snapshot(sparse);
  ok(sparseModel.done&&sparseModel.evaluated>=2&&sparseModel.calls>=4,'A sparse 5 Hz paint cadence completes real parallel forecasts before they expire');
  ok(Number(sparse.el.syncValue.textContent)===0&&worldView(sparse).growth===0,'Completing a sparse-frame forecast cannot score or grow the live world');
