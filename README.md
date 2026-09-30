@@ -5,7 +5,7 @@
 
 通常・新規Challenge・Dailyの既定は`rules=R3`。流星→捕獲→衛星→起爆連鎖の仕組みを継続し、吸収によるCORE成長と最大30秒の時間延長を追加しました。旧R1/R2のURLは元のルールで読み込み、異なるRules同士の記録は比較しません。
 
-**OVER DRIVE**は「時間を止め、星を選び、再始動で一斉起爆する」必殺技です。ENERGY 80以上・SYNC 35%以上・天体8個以上の吸収でREADY。ボタンをタップすると実時間5秒だけ世界が止まり、画面に`SELECT STARS`／`RESTART IN`と選択数を表示します。選んだ星はARMEDとなり、終了時に同一フレームで起爆。1プレイ2回まで、発動開始から世界時間14秒の再充填が必要です。停止中は残り時間・天体・連鎖波・UNKNOWN SIGNAL・Ghostも進みません。CORE BURSTは従来どおり3回、0.9〜1.55秒で最適解放です。
+**OVER DRIVE**は「時間を止め、星を選び、再始動で一斉起爆する」必殺技です。ENERGY 80以上・SYNC 35%以上・天体8個以上の吸収でREADY。選べる天体が3個未満なら、集まるまでボタンを待機表示にします。ボタンをタップすると実時間5秒だけ世界が止まり、画面に`SELECT STARS`／`RESTART IN`と選択数を表示します。選んだ星はARMEDとなり、終了時に同一フレームで起爆。1プレイ2回まで、発動開始から世界時間14秒の再充填が必要です。停止中は残り時間・天体・連鎖波・UNKNOWN SIGNAL・Ghostも進みません。CORE BURSTは従来どおり3回、0.9〜1.55秒で最適解放です。
 
 | 連鎖・同時起爆 | 同じ連鎖グループの時間報酬 |
 | --- | --- |
@@ -27,13 +27,13 @@ COREの描画サイズは基準の0.48倍から1倍へ滑らかに成長。吸�
 | STELLAR | 85 | star／proto-star |
 | NOVA | 135 | named-star |
 
-Named starsはSirius、Vega、Polaris、Rigel、Betelgeuse、Antares、Aldebaran、Procyon。捕獲時に英語名を短く表示します。連鎖段階に応じてMETEOR SHOWER／AURORA STREAM／SOLAR FLARE／MILKY WAY／SUPERNOVA／EVENT HORIZONを表示し、光流とCOREへの吸収を主役にします。結果には到達CORE段階・追加時間・最大宇宙現象・最大吸収天体を表示。SINGULARITYはR2の複数条件と演出順序を継続します。
+Named starsはSirius、Vega、Polaris、Rigel、Betelgeuse、Antares、Aldebaran、Procyon。捕獲後2.4秒間、英語名を控えめに表示します（選択中も表示）。連鎖段階に応じてMETEOR SHOWER／AURORA STREAM／SOLAR FLARE／MILKY WAY／SUPERNOVA／EVENT HORIZONを表示し、光流とCOREへの吸収を主役にします。結果には到達CORE段階・追加時間・最大宇宙現象・最大吸収天体を表示。SINGULARITYはR2の複数条件と演出順序を継続します。
 
 R3 Ghostは`gver=3`、61点を1.5秒間隔で最大90秒まで記録。ヘッダーに終了時の世界時間（60〜90秒、0.1秒単位）を持ち、終了後のサンプルは最終状態を保持します。共有URLは1,000文字未満に制限し、JSONや全入力履歴は含みません。R1の`gver=1`、R2の`gver=2`の61点・1秒間隔はそのまま維持。再生・勝敗・Rematchは同じSeedとRules同士で扱います。
 
 R3 Challenge例: https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R3
 
-`tests/galaxy.cjs`の新規88検査は、名称・READY・成長・時間報酬・対象進化・Named stars・1.5秒Ghost再生・旧R1/R2互換・Daily・Rematch・保存／共有フォールバックを確認します。活動天体18個・衝撃波24個の上限、DPR制限、非表示停止を維持しています。
+`tests/galaxy.cjs`の新規134検査は、名称・READY・成長・時間報酬・対象進化・Named stars・1.5秒Ghost再生・旧R1/R2互換・Daily・Rematch・保存／共有フォールバックを確認します。活動天体18個・衝撃波24個の上限、DPR制限、非表示停止を維持しています。
 
 ## 旧R2 / ORBIT & TIME LOCK（Step 11）
 
@@ -98,7 +98,7 @@ node tests/galaxy.cjs
 python3 -m http.server 8000
 ```
 ゲームのルール検査は出荷するモデルを直接抽出して実行します。操作検査はDOM・Canvas・Web Audioのモックで、タイマー、操作、音声開始制限、中断復帰、再挑戦、保存失敗を確認します。
-ブラウザQA: `/tests/preview.html`。320×568、375×812、390×844、430×932、390×660、844×390、1920×1080の実CSS領域で、ボタン・文字・重なり・オーバーフローを検査。「上級操作を60秒検証」は実ブラウザ内の合成PointerEventで実時間のゲームを操作します。画面寸法の検査・合成入力は端末実機のタッチ、Safari、音質、振動、safe-area、FPSの保証を代替しません。
+ブラウザQA: `/tests/preview.html`。320×568、375×812、390×844、430×932、390×660、844×390、1920×1080の実CSS領域で、ボタン・文字・重なり・オーバーフローを検査。「成長プレイを検証」は実ブラウザ内の合成PointerEventで実時間のゲームを操作します。画面寸法の検査・合成入力は端末実機のタッチ、Safari、音質、振動、safe-area、FPSの保証を代替しません。
 
 ## REMOTE CHALLENGE / R1
 起動時のNORMAL TEST / CHALLENGEで切替。Challenge URLでは自動でCHALLENGEを選択します。コアに触れて60秒開始。結果から同じSeedを共有し、友人とSCOREを比較できます。通常結果の「CREATE A CHALLENGE」は、新しい共通条件での60秒プレイを開始します（通常の結果をChallenge結果として扱いません）。

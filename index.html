@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#03050d">
-<meta name="description" content="60秒で、あなたの共鳴を測る。タップ・チャージ・NOVAをつなぐ、光と音のニューラル同期テスト。">
+<meta name="description" content="小さなCOREから宇宙を育てる。天体の連鎖で時間を延ばし、OVER DRIVEで時間停止・一斉起爆。">
 <meta property="og:title" content="ASTRAL CORE — NEURAL SYNC TEST">
-<meta property="og:description" content="あなたは特異点に到達できるか。60秒のNEURAL SYNC TEST。">
+<meta property="og:description" content="連鎖で宇宙を育てる。60秒＋連鎖で時間延長。友人のGhostとも対戦。">
 <meta property="og:type" content="website">
 <title>ASTRAL CORE — NEURAL SYNC TEST</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2303050d'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%2382edff' stroke-width='2'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='8' transform='rotate(-35 32 32)' fill='none' stroke='%23b694ff' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%23e8fbff'/%3E%3C/svg%3E">
@@ -610,7 +610,7 @@ function drawStarField(dt,front=false){const g=starGeometry(),now=game.elapsed;c
   ctx.beginPath();ctx.moveTo(-3,-6);ctx.lineTo(2,-8);ctx.lineTo(6,-1);ctx.lineTo(2,6);ctx.lineTo(-4,4);ctx.closePath();ctx.fillStyle='#0b1a2b';ctx.fill();ctx.strokeStyle=star.flare?'rgba(199,172,249,.88)':'rgba(137,222,238,.82)';ctx.lineWidth=1;ctx.stroke();
   ctx.beginPath();ctx.moveTo(-2,-4);ctx.lineTo(2,-6);ctx.lineTo(3,-1);ctx.lineTo(0,2);ctx.closePath();ctx.fillStyle=star.flare?'rgba(182,164,235,.8)':'rgba(129,219,235,.8)';ctx.fill();
   ctx.beginPath();ctx.arc(1,-2,1.15,0,TAU);ctx.fillStyle='#e2f7fa';ctx.fill();}
-  if(star.state==='ARMED'){ctx.beginPath();ctx.ellipse(0,0,17,11,-.4,0,TAU);ctx.strokeStyle='#d9c7ffaa';ctx.lineWidth=1.5;ctx.stroke();ctx.beginPath();ctx.arc(0,0,3,0,TAU);ctx.strokeStyle='#eee4ff';ctx.stroke();}if(!reduced){const a=t*.45+star.phase;ctx.fillStyle=star.flare?'rgba(186,156,235,.58)':'rgba(139,205,224,.52)';ctx.beginPath();ctx.arc(Math.cos(a)*18,Math.sin(a)*9,.75,0,TAU);ctx.fill();}ctx.restore();if(star.name&&star.state!=='INBOUND'){ctx.globalAlpha=alpha*.68;ctx.fillStyle='#c8c3dd';ctx.font='9px ui-monospace,monospace';ctx.textAlign=p.x>W-85?'right':'left';ctx.fillText(star.name,p.x+(p.x>W-85?-13:13),p.y-8);}}
+  if(star.state==='ARMED'){ctx.beginPath();ctx.ellipse(0,0,17,11,-.4,0,TAU);ctx.strokeStyle='#d9c7ffaa';ctx.lineWidth=1.5;ctx.stroke();ctx.beginPath();ctx.arc(0,0,3,0,TAU);ctx.strokeStyle='#eee4ff';ctx.stroke();}if(!reduced){const a=t*.45+star.phase;ctx.fillStyle=star.flare?'rgba(186,156,235,.58)':'rgba(139,205,224,.52)';ctx.beginPath();ctx.arc(Math.cos(a)*18,Math.sin(a)*9,.75,0,TAU);ctx.fill();}ctx.restore();if(star.name&&star.state!=='INBOUND'&&(star.state==='ARMED'||age-star.duration<2.4)){ctx.globalAlpha=alpha*.68;ctx.fillStyle='#c8c3dd';ctx.font='9px ui-monospace,monospace';ctx.textAlign=p.x>W-85?'right':'left';ctx.fillText(star.name,p.x+(p.x>W-85?-13:13),p.y-8);}}
  if(front){ctx.restore();return;}
  // One restrained wave per release; linked filaments carry the motion to the next node.
  for(const wave of starField.waves){const age=now-wave.born,p=clamp(age/.42),radius=wave.radius*p,alpha=clamp(1-age/.7);ctx.globalAlpha=alpha*.52;ctx.beginPath();ctx.ellipse(wave.x,wave.y,radius,radius*.84,-.25,0,TAU);ctx.strokeStyle=wave.chain.count>=5?'#bcafe4':'#8dc7dc';ctx.lineWidth=1.35-p*.65;ctx.stroke();if(wave.from){const mx=(wave.from.x+wave.x)/2,my=(wave.from.y+wave.y)/2-8;ctx.globalAlpha=alpha*.7;ctx.beginPath();ctx.moveTo(wave.from.x,wave.from.y);ctx.quadraticCurveTo(mx,my,wave.x,wave.y);ctx.strokeStyle='#a7e5ed';ctx.lineWidth=1.1;ctx.stroke();ctx.globalAlpha=alpha*.45;ctx.drawImage(cyan,wave.x-11,wave.y-11,22,22);}}
