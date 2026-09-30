@@ -1,7 +1,43 @@
 # ASTRAL CORE / REMOTE GHOST DUEL
-60秒で光る星を爆発連鎖させ、未来のコアとの同期率を高めるミニゲーム。
+60秒から始め、天体の爆発連鎖で時間を延ばし、小さなCOREを成長させるミニゲーム。
 公開: https://dicek9750.github.io/astral-core-demo/
-## 現行 R2 / ORBIT & TIME LOCK
+## 現行 R3 / OVER DRIVE & CORE GROWTH（Step 12）
+
+通常・新規Challenge・Dailyの既定は`rules=R3`。流星→捕獲→衛星→起爆連鎖の仕組みを継続し、吸収によるCORE成長と最大30秒の時間延長を追加しました。旧R1/R2のURLは元のルールで読み込み、異なるRules同士の記録は比較しません。
+
+**OVER DRIVE**は「時間を止め、星を選び、再始動で一斉起爆する」必殺技です。ENERGY 80以上・SYNC 35%以上・天体8個以上の吸収でREADY。ボタンをタップすると実時間5秒だけ世界が止まり、画面に`SELECT STARS`／`RESTART IN`と選択数を表示します。選んだ星はARMEDとなり、終了時に同一フレームで起爆。1プレイ2回まで、発動開始から世界時間14秒の再充填が必要です。停止中は残り時間・天体・連鎖波・UNKNOWN SIGNAL・Ghostも進みません。CORE BURSTは従来どおり3回、0.9〜1.55秒で最適解放です。
+
+| 連鎖・同時起爆 | 同じ連鎖グループの時間報酬 |
+| --- | --- |
+| 1〜2連鎖 | なし |
+| 3連鎖 | 累計 +0.5秒 |
+| 5連鎖 | 累計 +1.0秒 |
+| 8連鎖以上 | 累計 +1.5秒 |
+| 3個以上の同時起爆 | 上記へ一度だけ +1.0秒 |
+
+閾値を越えた差分だけを加算し、1グループ最大+2.5秒、1プレイ合計最大+30秒。ゲーム時間は60〜90秒で有限、OVER DRIVEの実時間は別です。追加された時間にもSeedから決まる天体流入が続きます。
+
+COREの描画サイズは基準の0.48倍から1倍へ滑らかに成長。吸収質量に連鎖倍率と同時起爆倍率が加わり、単発より大連鎖が効率的です。昇格しても既に存在する天体を置き換えず、新しい流入対象が変化します。
+
+| CORE段階 | 累計成長量 | 新しく引き寄せる天体 |
+| --- | --- | --- |
+| SEED | 0 | dust／debris／gas |
+| PULSE | 18 | fragment／mineral／ice |
+| ORBIT | 45 | proto-star／star |
+| STELLAR | 85 | star／proto-star |
+| NOVA | 135 | named-star |
+
+Named starsはSirius、Vega、Polaris、Rigel、Betelgeuse、Antares、Aldebaran、Procyon。捕獲時に英語名を短く表示します。連鎖段階に応じてMETEOR SHOWER／AURORA STREAM／SOLAR FLARE／MILKY WAY／SUPERNOVA／EVENT HORIZONを表示し、光流とCOREへの吸収を主役にします。結果には到達CORE段階・追加時間・最大宇宙現象・最大吸収天体を表示。SINGULARITYはR2の複数条件と演出順序を継続します。
+
+R3 Ghostは`gver=3`、61点を1.5秒間隔で最大90秒まで記録。ヘッダーに終了時の世界時間（60〜90秒、0.1秒単位）を持ち、終了後のサンプルは最終状態を保持します。共有URLは1,000文字未満に制限し、JSONや全入力履歴は含みません。R1の`gver=1`、R2の`gver=2`の61点・1秒間隔はそのまま維持。再生・勝敗・Rematchは同じSeedとRules同士で扱います。
+
+R3 Challenge例: https://dicek9750.github.io/astral-core-demo/?challenge=A7F291C8&rules=R3
+
+`tests/galaxy.cjs`の新規88検査は、名称・READY・成長・時間報酬・対象進化・Named stars・1.5秒Ghost再生・旧R1/R2互換・Daily・Rematch・保存／共有フォールバックを確認します。活動天体18個・衝撃波24個の上限、DPR制限、非表示停止を維持しています。
+
+## 旧R2 / ORBIT & TIME LOCK（Step 11）
+
+以下はR2の仕様です。現在の操作画面での必殺技名はOVER DRIVEに統一しています。
 
 星片は画面外からCOREへ引き寄せられ、捕獲後は軌道を回り続けます。時間経過だけでは消えず、画面内の活動星片は最大18個。星片をタップすると即起爆し、波が届いた周囲の星片へ連鎖します。
 
@@ -58,6 +94,7 @@ node tests/ux.cjs
 node tests/input.cjs
 node tests/stars.cjs
 node tests/orbit.cjs
+node tests/galaxy.cjs
 python3 -m http.server 8000
 ```
 ゲームのルール検査は出荷するモデルを直接抽出して実行します。操作検査はDOM・Canvas・Web Audioのモックで、タイマー、操作、音声開始制限、中断復帰、再挑戦、保存失敗を確認します。
