@@ -27,6 +27,8 @@
 
 WORLD MODELは実際のR4物理を複製して候補を比較し、対象の近くへ予測CHAINと光路を投影します。Agent構造は解析時だけCOREから展開。HUMANが最後の起爆を決めます。外部生成AI/APIは使いません。共有・Daily・Ghostの候補比較重みは固定、匿名通常セッションの補助だけ入力傾向に応じて変わります。
 
+音空間もCORE段階に追従し、抑えた音量のまま低域・倍音・ステレオ幅が増えます。Named Starの短音は固有ID、連鎖の音階は実CHAIN数に対応します。音声は操作後だけ開始し、24 voice上限とミュート・非表示停止を維持します。
+
 R4 Ghostは `gver=4`。gver=3と同じ61点・1.5秒間隔・60〜90世界秒の圧縮レイアウトを使い、ヘッダーversionでR4へ結び付けます。gver=1/2/3は変更していません。結果のUNIVERSE SIGNATUREは到達段階、実際の捕獲名、最大連鎖、最大宇宙現象、OVER DRIVE回数から生成します。R4のSINGULARITY条件はNOVA段階・10連鎖以上・3個以上の再始動起爆・成功CORE HOLD2回・NOVA3回・SYNC90%以上、SSはSYNC95%以上です。
 
 検証: `node tests/ascension.cjs` と既存11スイート。公開ブラウザQAの「R4 宇宙成長・操作検証」は実時間・合成PointerEventで同一ゲームを操作します。描画・音質・振動・実機Safariはモックテストとは別です。
