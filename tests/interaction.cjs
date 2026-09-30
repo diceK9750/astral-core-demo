@@ -5,7 +5,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const script=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n');
-function environment({reduced=false,audioAvailable=true,storageFail=false,stored=null,search="",share=null,clipboard=null}={}){
+function environment({reduced=false,audioAvailable=true,storageFail=false,stored=null,search="?rules=R3",share=null,clipboard=null}={}){
  let now=1000,serial=0,drawCalls=0;const rafs=new Map(),timers=new Map(),audioContexts=[],vibrations=[];
  class Events{constructor(){this.listeners={};}addEventListener(type,fn){(this.listeners[type]??=[]).push(fn);}removeEventListener(type,fn){this.listeners[type]=(this.listeners[type]||[]).filter(f=>f!==fn);}fire(type,fields={}){const e={type,target:this,preventDefault(){this.defaultPrevented=true;},stopPropagation(){this.stopped=true;},...fields};for(const fn of this.listeners[type]||[])fn(e);return e;}}
  class Classes{constructor(v=''){this.values=new Set(v.split(/\s+/).filter(Boolean));}add(...values){for(const v of values)this.values.add(v);}remove(...values){for(const v of values)this.values.delete(v);}contains(v){return this.values.has(v);}toggle(v,on){if(on===undefined)on=!this.values.has(v);on?this.add(v):this.remove(v);return on;}}
