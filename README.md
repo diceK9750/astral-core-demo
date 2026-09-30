@@ -1,6 +1,27 @@
 # ASTRAL CORE / REMOTE GHOST DUEL
 60秒から始め、天体の爆発連鎖で時間を延ばし、小さなCOREを成長させるミニゲーム。
 公開: https://dicek9750.github.io/astral-core-demo/
+## LOCAL WORLD MODEL（Step 13）
+
+COREを支えるローカル予測系を追加。MODELボタンなどから最大1.5秒先の連鎖を投影し、候補となる天体と光路を短く表示します。結果は既存の操作ヒント枠へ一時表示し、中央COREの面積を維持します。通常の投影枠は1プレイ3回までで、初回と昇格時の自動投影も含みます。OVER DRIVE中の再始動予測は別枠です。既存のR3の物理・採点・Seed・Ghost形式は変更していません。起爆やARMED選択はプレイヤーが行い、予測系が勝手に実行することはありません。
+
+| 協調する処理 | 実際の役割 |
+| --- | --- |
+| SCOUT | 現在の天体配置から密度を観測し、候補を最大4個に絞る |
+| SIMULATOR | 世界を複製し、既存の軌道・衝撃波ロジックで短い未来を再生する |
+| ROUTER | 再生で実際に伝播した連鎖の光路を取り出す |
+| OPTIMIZER | 連鎖数・吸収質量・成長・時間報酬から候補を比較する |
+
+SEED／PULSEではCORE内で計算し、ORBIT到達でSCOUTとSIMULATOR、STELLARでROUTER、NOVAでOPTIMIZERも衛星的な協調ノードとして可視化します。処理役割そのものは初期段階から存在します。
+
+CHAIN COMPILERは天体タップ、BURST SOLVERは既存CORE BURST、PHASE ANCHORはOVER DRIVE中のARMED候補と再始動をそれぞれ投影する専用処理です。新しい起爆能力や加点倍率を作るツールではありません。通常プレイでは直近24件までの操作傾向を候補比較に反映し、Challenge／Daily／Ghostでは固定の比較重みを使います。履歴はそのプレイだけのものです。
+
+投影は「複製した時点の配置で、指定操作だけを行った場合」の条件付き予測です。1/30秒と1/60秒刻みで対象ID・連鎖数・吸収質量・成長・時間報酬が一致した候補はSTABLE、異なる候補はVOLATILEとして扱い、後の入力や連鎖結果を保証しません。有効な枝がなければNO BRANCH。VOID中は「触らない」の操作指示を優先し、通常の投影を開始しません。共有された連鎖グループとPRNG状態も複製し、本体の天体・スコア・生成順を変更せず、処理量を小さなステップへ分割します。OVER DRIVE中は現実の世界を静止させたまま、再始動を仮定した複製世界で評価します。
+
+これはブラウザ内で動く決定的な協調サブルーチンです。LLM、学習済み生成モデル、外部API、SDK、オンライン通信は使用していません。設計上の参考は、OpenAI Agents SDKの[Tools](https://openai.github.io/openai-agents-python/tools/)・[Handoffs](https://openai.github.io/openai-agents-python/handoffs/)・[Tracing](https://openai.github.io/openai-agents-python/tracing/)にある役割分担と観測可能な実行経路、およびGoogle DeepMindの[Genie 3原典](https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/)にある行動に応じた環境変化のシミュレーションです。これらの製品やモデルを実行しているという意味ではありません。
+
+`tests/agentic.cjs`の105検査で世界の非変更、PRNG再現、同じ刻みでの投影と実結果、ツールの使用条件、決定性、履歴上限、公平な固定重み、予測処理量、MODEL操作・保存失敗・VOID指示・既存モードとの互換を検証します。従来の553検査も継続し、合計658検査です。実機の描画速度・音・触覚と、公開版の表示は別途確認します。
+
 ## 現行 R3 / OVER DRIVE & CORE GROWTH（Step 12）
 
 通常・新規Challenge・Dailyの既定は`rules=R3`。流星→捕獲→衛星→起爆連鎖の仕組みを継続し、吸収によるCORE成長と最大30秒の時間延長を追加しました。旧R1/R2のURLは元のルールで読み込み、異なるRules同士の記録は比較しません。
@@ -95,6 +116,7 @@ node tests/input.cjs
 node tests/stars.cjs
 node tests/orbit.cjs
 node tests/galaxy.cjs
+node tests/agentic.cjs
 python3 -m http.server 8000
 ```
 ゲームのルール検査は出荷するモデルを直接抽出して実行します。操作検査はDOM・Canvas・Web Audioのモックで、タイマー、操作、音声開始制限、中断復帰、再挑戦、保存失敗を確認します。
