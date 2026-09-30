@@ -201,7 +201,7 @@ function gesture(type){const win=frame.contentWindow,doc=frame.contentDocument,r
 async function tapTest(){gesture('pointerdown');await delay(65);gesture('pointerup');}
 async function holdTest(){gesture('pointerdown');await delay(1100);gesture('pointerup');}
 async function novaTest(){await tapTest();await delay(90);await tapTest();}
-function focusGame(){frame.contentWindow.focus();const doc=frame.contentDocument;if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();}
+function focusGame(){frame.scrollIntoView({block:'start',behavior:'instant'});frame.contentWindow.focus();const doc=frame.contentDocument;if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();}
 function gestureAt(type,x,y){const win=frame.contentWindow;frame.contentDocument.getElementById('stage').dispatchEvent(new win.PointerEvent(type,{pointerId:93,isPrimary:true,button:0,clientX:x,clientY:y,bubbles:true}));}
 async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.disabled=true;log.textContent='R2 軌道の実ブラウザ検証を準備中…';
  try{
