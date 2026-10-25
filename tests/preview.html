@@ -26,7 +26,7 @@
 <label for="testMode">モード<select id="testMode"><option value="normal">NORMAL</option><option value="challenge">CHALLENGE A7F291C8</option><option value="ghost">CAPTURED GHOST</option></select></label><button type="button" class="primary" id="run">Run checks</button>
 <button type="button" id="measure">180 frames を計測</button>
 <label for="pilot">操作シナリオ<select id="pilot"><option value="full">混合操作</option><option value="casual">タップ中心の記録</option></select></label><button type="button" id="allSizes">全寸法を検査</button><button type="button" id="play">成長プレイを検証</button><button type="button" id="hold">長押し1.1秒</button><button type="button" id="novaTest">NOVA操作</button><button type="button" id="cadence">タップ間隔を検証</button><button type="button" id="reload">起動からやり直す</button>
-<button type="button" id="ascensionTrial">R4 宇宙成長・操作検証</button><button type="button" id="burstModelTrial">BURST SOLVER 検証</button><button type="button" id="agenticTrial">WORLD MODEL・Agent・予測検証</button><button type="button" id="orbitTrial">R2 軌道・OVER DRIVE 検証</button><button type="button" id="galaxyTrial">R3 成長・OVER DRIVE 検証</button>
+<button type="button" id="surgeResultTrial">結果のOVER DRIVE案内を確認</button><button type="button" id="surgeAuditTrial">再監査：DRIVE残数・ドラッグ・VOID</button><button type="button" id="surgeTrial">成長流星・無制限IMPULSE・DRIVE残数</button><button type="button" id="surgeHoldSizes">長押し中の全寸法を検査</button><button type="button" id="surgeHoldPreview">長押し演出プレビュー</button><button type="button" id="signalLayoutTrial">成長後CORE・シグナル全寸法</button><button type="button" id="relayTrial">補充計測（390×844）・NOVA・OVER DRIVE</button><button type="button" id="tempoTrial">再監査：Space・ドラッグ・テンポ</button><button type="button" id="flow5Trial">ダブルNOVA・トリプルOVER DRIVE</button><button type="button" id="flow4Trial">旧FLOW4 連続流入</button><button type="button" id="flow3Trial">旧FLOW3 流星の互換確認</button><button type="button" id="flow2Trial">旧FLOW2 集星の互換確認</button><button type="button" id="flowTrial">FLOW 星の補充・12秒検証</button><button type="button" id="ascensionTrial">R4 宇宙成長・操作検証</button><button type="button" id="starTargeting">R4 動く天体タップ</button><button type="button" id="pointerRecovery">画面外リリース・入力復帰</button><button type="button" id="burstModelTrial">BURST SOLVER 検証</button><button type="button" id="agenticTrial">WORLD MODEL・Agent・予測検証</button><button type="button" id="orbitTrial">R2 軌道・OVER DRIVE 検証</button><button type="button" id="galaxyTrial">R3 成長・OVER DRIVE 検証</button>
 </div>
 <div class="controls"><button type="button" id="captureGhost">結果のGhost URLを取得</button><button type="button" id="openGhost">記録を別ページで対戦</button><label style="flex:1;min-width:250px">Ghost URL<input id="ghostLink" type="url" style="width:100%;min-height:44px;background:#111b2b;color:#cae7ff;border:1px solid #40506a;padding:10px"></label><span id="ghostReadout" class="summary"></span></div>
 <pre id="cadenceLog" class="summary" aria-live="polite"></pre>
@@ -41,6 +41,8 @@
 <div id="phase" class="note phase"></div>
 <ul id="checks" class="checks"></ul>
 <div id="timestamp" class="timestamp"></div>
+<h2 style="margin-top:20px">R4 押下リング・目視確認</h2>
+<p class="note">天体を短く押し、細いシアンの上下の弧がその天体に追従すること、名前と中心を覆わないことを確認。離す・ドラッグ・360ms超の長押し・中断後は消え、OVER DRIVEでは解放後に従来のARMED表示へ移ること。全寸法と動きを減らす設定で確認してください。合成入力・Canvas命令検査だけでは目視確認済みとは扱いません。</p>
 <h2 style="margin-top:20px">Runtime errors</h2>
 <div id="errors" class="error-log" role="log">読み込み完了後の例外を監視します。</div>
 <h2 style="margin-top:20px">Frame timing</h2>
@@ -95,8 +97,8 @@ function render(checks){
 function showErrors(){ $('errors').textContent=errors.length?errors.join('\n\n'):'監視開始後の未処理例外：0 件'; }
 function measure(){
  if(!loaded){$('performance').textContent='先にデモの読み込みを完了してください。';return;}
- cancelMeasurement();
- const win=frame.contentWindow,doc=frame.contentDocument,mode=()=>doc.getElementById('overdrive').getAttribute('aria-pressed')==='true'?'OVER DRIVE':'NORMAL',initialMode=mode(),initialSize=width+' × '+height;
+ cancelMeasurement();focusGame();
+ const win=frame.contentWindow,doc=frame.contentDocument,mode=()=>doc.getElementById('app').classList.contains('overdrive')?'OVER DRIVE':'NORMAL',initialMode=mode(),initialSize=width+' × '+height;
  let request=0,observer=null,start=null,previous=null,finished=false,longTasks=0,longDuration=0,monitoring=false,callbacks=0;
  const intervals=[];
  const startedAt=performance.now(),visibility=()=>'visibility: page '+document.visibilityState+' / iframe '+doc.visibilityState;
@@ -152,7 +154,7 @@ function run(){
  checks.push(check(sw<=width+1&&sh<=height+1,'ページのはみ出し',sw+' × '+sh+' px / 表示領域 '+width+' × '+height+' px'));
  const canvas=doc.getElementById('scene'),cr=canvas&&rectangle(canvas);
  checks.push(check(!!canvas&&canvas.width>0&&canvas.height>0&&cr.width>=width-1&&cr.height>=height-1,'Canvas の描画領域',canvas?canvas.width+' × '+canvas.height+' bitmap px / CSS '+Math.round(cr.width)+' × '+Math.round(cr.height):'#scene が見つかりません'));
- const resultOpen=visible(doc.getElementById('result')),resultPanel=doc.getElementById('result'),resultScroll=resultOpen&&win.getComputedStyle(resultPanel).overflowY==='auto',pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect','#shareChallenge',...(!doc.getElementById('shareSeedOnly').hidden?['#shareSeedOnly']:[]),'#backMode']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound','#modelButton',...(!demoApp.classList.contains('duel')?[...(!doc.getElementById('remoteInfo').hidden?['#dailyMode']:[])]:[])]:['#coreTarget','#overdrive','#sound','#modelButton'];
+ const resultOpen=visible(doc.getElementById('result')),resultPanel=doc.getElementById('result'),resultScroll=resultOpen&&win.getComputedStyle(resultPanel).overflowY==='auto',pauseOpen=visible(doc.getElementById('pausePanel'));const selectors=resultOpen?['#reconnect','#shareChallenge',...(!doc.getElementById('shareSeedOnly').hidden?['#shareSeedOnly']:[]),'#backMode']:pauseOpen?['#resume']:introActive?['#coreTarget','#connect','#sound','#modelButton','#helpButton',...(!demoApp.classList.contains('duel')?[...(!doc.getElementById('remoteInfo').hidden?['#dailyMode']:[])]:[])]:['#coreTarget',...(!demoApp.classList.contains('gesture-drive')?['#overdrive']:[]),'#sound','#modelButton','#helpButton','#pauseButton'];
  const controls=selectors.map(s=>doc.querySelector(s)).filter(visible),missing=selectors.filter(s=>!visible(doc.querySelector(s)));
  checks.push(check(missing.length===0,'主要操作の表示',missing.length?'非表示または未検出：'+missing.join(', '):selectors.join(', ')));
  const escaped=controls.filter(el=>{const r=rectangle(el);return r.x < -1||r.right>width+1||(resultScroll?r.y < -resultPanel.scrollTop-1||r.bottom>resultPanel.scrollHeight-resultPanel.scrollTop+1:r.y < -1||r.bottom>height+1);});
@@ -164,11 +166,13 @@ function run(){
  if(introActive&&!resultOpen&&!pauseOpen){
   const goal=visible(doc.getElementById('heroTitle'))?doc.getElementById('heroTitle'):doc.getElementById('landscapeTitle'),subtitle=visible(doc.getElementById('heroSub'))?doc.getElementById('heroSub'):doc.getElementById('landscapePurpose'),gestures=[...doc.querySelectorAll('#hint .gesture')],texts=[goal,subtitle,...gestures];
   const inside=texts.every(el=>visible(el)&&textRectangles(el).every(r=>r.x>=0&&r.right<=width&&r.y>=0&&r.bottom<=height));
-  checks.push(check(inside&&gestures.length===3,'初期目的と3操作の表示','目的・モード説明・TAP / HOLD / NOVA が画面内で読める'));
+  checks.push(check(inside&&gestures.length===(demoApp.classList.contains('gesture-drive')?4:3),'初期目的と3操作の表示','目的・モード説明・TAP / HOLD / NOVA が画面内で読める'));
   const target=doc.getElementById('coreTarget'),guide=doc.getElementById('hint');
   checks.push(check(!overlap(rectangle(target),rectangle(guide)),'初期操作ガイドとCOREの分離','3操作の記号はCOREのタッチ領域外'));
  }
  if(!introActive&&!resultOpen&&!pauseOpen){
+  const experience=['evolution','coach','abilityStrip','chargeMeter'].map(id=>doc.getElementById(id)).filter(visible);
+  checks.push(check(experience.every(el=>textRectangles(el).every(r=>r.x>=0&&r.right<=width&&r.y>=0&&r.bottom<=height)),'成長と次の一手の表示','成長・操作ガイド・能力状態・長押しゲージの文字が画面内'));
   const areas=['.topbar','.dock','.stage-label','#signalBanner'].map(s=>doc.querySelector(s)).filter(visible),core=doc.getElementById('coreTarget'),obstructions=core&&visible(core)?areas.filter(el=>!el.contains(core)&&overlap(rectangle(el),rectangle(core))).map(label):[];
  checks.push(check(obstructions.length===0,'コア領域と HUD の重なり',obstructions.length?obstructions.join(', ')+'（意図した配置か目視確認）':'検出なし',true));
  const hud=doc.querySelector('.game-hud'),signal=doc.getElementById('signalBanner'),hint=doc.querySelector('.hint');
@@ -203,6 +207,45 @@ async function holdTest(){gesture('pointerdown');await delay(1100);gesture('poin
 async function novaTest(){const world=worldSnapshot(),p=world?.rules==='R4'?world.active.find(s=>s.targetable&&s.state!=='ARMED'&&s.x>28&&s.x<width-28&&s.y>100&&s.y<height-90):null;if(world?.rules==='R4'&&!p)return;if(p){focusGame();const r=frame.contentDocument.getElementById('app').getBoundingClientRect();for(let i=0;i<2;i++){gestureAt('pointerdown',r.left+p.x,r.top+p.y);await delay(45);gestureAt('pointerup',r.left+p.x,r.top+p.y);if(i===0)await delay(80);}}else{await tapTest();await delay(90);await tapTest();}}
 function focusGame(){frame.scrollIntoView({block:'start',behavior:'instant'});frame.contentWindow.focus();const doc=frame.contentDocument;if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();}
 function gestureAt(type,x,y){const win=frame.contentWindow;frame.contentDocument.getElementById('stage').dispatchEvent(new win.PointerEvent(type,{pointerId:93,isPrimary:true,button:0,clientX:x,clientY:y,bubbles:true}));}
+async function starTargeting(){
+ const button=$('starTargeting'),log=$('runLog');button.disabled=true;
+ try{
+  $('viewport').value='390,844';setViewport();
+  const loading=new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Frame load timeout')),8000);frame.addEventListener('load',()=>{clearTimeout(timeout);resolve();},{once:true});});
+  frame.src='../index.html?challenge=A7F291C8&rules=R4&qa=star-targeting'+Date.now();await loading;focusGame();await waitPlayfieldReady();
+  const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(120);
+  const initial=worldSnapshot(),star=initial.active.find(s=>s.id===4&&s.targetable),rect=doc.getElementById('app').getBoundingClientRect();
+  if(!star)throw Error('Moving target is unavailable');const x=rect.left+star.x,y=rect.top+star.y;
+  gestureAt('pointerdown',x,y);await delay(250);const beforeRelease=worldSnapshot(),moved=beforeRelease.active.find(s=>s.id===star.id);
+  if(!moved)throw Error('Target disappeared before release');if(Math.hypot(moved.x-star.x,moved.y-star.y)<=38)throw Error('Movement did not exceed the hit radius; rerun this timing-sensitive browser trial');
+  gestureAt('pointerup',x,y);if(worldSnapshot().active.some(s=>s.id===star.id)||Number(doc.getElementById('syncValue').textContent)<=0)throw Error('Stationary 250ms press missed its original target');
+  await delay(60);gestureAt('pointerdown',x,y);await delay(35);gestureAt('pointerup',x,y);
+  if(doc.getElementById('eventTitle').textContent!=='GRAVITY NOVA')throw Error('Same-location second tap did not focus GRAVITY NOVA');
+  log.textContent='PASS · stationary 250ms contact tracks body #4 · moved '+Math.hypot(moved.x-star.x,moved.y-star.y).toFixed(1)+'px · same-location NOVA · synthetic browser events · errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL · '+e.message;}finally{if(loaded)gestureAt('pointercancel',0,0);button.disabled=false;}
+}
+$('starTargeting').addEventListener('click',starTargeting);
+async function pointerRecovery(){
+ const button=$('pointerRecovery'),log=$('runLog');button.disabled=true;let stage,originalCapture,emit;
+ try{
+  const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&qa=pointer-recovery'+Date.now();await loaded;focusGame();await waitPlayfieldReady();
+  const win=frame.contentWindow,doc=frame.contentDocument;doc.getElementById('connect').click();await delay(150);stage=doc.getElementById('stage');originalCapture=stage.setPointerCapture;stage.setPointerCapture=()=>{throw new Error('QA: pointer capture unavailable');};
+  const core=doc.getElementById('coreTarget').getBoundingClientRect(),x=core.x+core.width/2,y=core.y+core.height/2,outside=stage.getBoundingClientRect().right+10;
+  emit=(type,id=94,external=false)=>{const target=external?doc.body:stage;target.dispatchEvent(new win.PointerEvent(type,{pointerId:id,isPrimary:id===94,button:0,clientX:external?outside:x,clientY:y,bubbles:true,cancelable:true}));};
+  const cells=()=>doc.getElementById('burstCells').getAttribute('aria-label');
+  log.textContent='R4 · capture failure → outside release → cancel → fresh HOLD';
+  emit('pointerdown');await delay(1100);emit('pointerup',95,true);emit('pointercancel',95,true);
+  if(!cells().includes('3回'))throw Error('Secondary pointer consumed a charge');
+  emit('pointerup',94,true);if(!cells().includes('2回'))throw Error('Outside release left the charge stuck');
+  emit('pointerup',94,true);if(!cells().includes('2回'))throw Error('Duplicate release consumed another charge');
+  emit('pointerdown');await delay(1100);emit('pointercancel',94,true);await delay(150);
+  if(!cells().includes('2回')||/CHARGING|RELEASE NOW|OVERCHARGE/.test(doc.getElementById('coreStatus').textContent))throw Error('Outside cancellation did not clear the hold');
+  emit('pointerdown');await delay(1100);emit('pointerup',94,true);
+  if(!cells().includes('1回'))throw Error('Next gesture could not start after cancellation');
+  log.textContent='PASS · capture failure · outside release 3→2 · secondary/duplicate ignored · cancel spends 0 · fresh HOLD 2→1 · errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL · '+e.message;}finally{if(emit)emit('pointercancel',94,true);if(stage)stage.setPointerCapture=originalCapture;button.disabled=false;}
+}
+$('pointerRecovery').addEventListener('click',pointerRecovery);
 async function orbitTrial(){const button=$('orbitTrial'),log=$('runLog');button.disabled=true;log.textContent='R2 軌道の実ブラウザ検証を準備中…';
  try{
   const loading=new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Frame load timeout')),8000);frame.addEventListener('load',()=>{clearTimeout(timeout);resolve();},{once:true});});
@@ -291,6 +334,137 @@ log.textContent='R4 LIVE · '+worldSnapshot().elapsed.toFixed(1)+'s · '+doc.get
 if(!visible(doc.getElementById('result')))throw Error('R4 run did not finish');run();log.textContent='PASS R4 · full universe run · level '+highest+' · '+seenNames.size+' named stars observed · '+escaped+' slingshots · '+freezeChecks+' frozen worlds\n'+doc.getElementById('universeSignature').textContent+'\nTAP '+inputs.tap+' / CORE HOLD '+inputs.hold+' / NOVA '+inputs.nova+' / errors '+errors.length;
 }catch(e){log.textContent='FAIL R4 · '+e.stack;}finally{button.disabled=false;}}
 $('ascensionTrial').addEventListener('click',ascensionTrial);
+async function flowTrial(){const button=$('flowTrial'),log=$('runLog');button.disabled=true;try{
+ const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&pace=flow1&qa=flow';await loaded;focusGame();await waitPlayfieldReady();
+ const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(120);let w=worldSnapshot();if(w?.pace!=='flow1')throw Error('Flow pacing not active');
+ const opening=w.active.filter(s=>s.targetable&&s.state==='ORBIT').length;if(opening<5)throw Error('Opening lacks targets');
+ let taps=0,highest=0,longest=0,emptySince=null;const deadline=performance.now()+25000;let nextTap=.2;
+ while(w.elapsed<12){focusGame();if(performance.now()>deadline)throw Error('Clock stalled');const targets=w.active.filter(s=>s.targetable&&s.state!=='ARMED'&&s.x>28&&s.x<width-28&&s.y>100&&s.y<height-90);if(!targets.length){emptySince??=w.elapsed;longest=Math.max(longest,w.elapsed-emptySince);}else emptySince=null;
+  highest=Math.max(highest,...w.active.map(s=>s.id));if(w.elapsed>=nextTap&&targets.length){await starTap();taps++;nextTap=w.elapsed+.65;}
+  log.textContent='FLOW · '+w.elapsed.toFixed(1)+'s / '+taps+' taps / 最大空白 '+longest.toFixed(2)+'s';await delay(50);w=worldSnapshot();
+ }
+ if(taps<6||highest<=7||w.growth<=0||longest>1.5)throw Error('Supply or input rhythm failed');
+ log.textContent='PASS FLOW · opening '+opening+' / '+taps+' taps / growth '+w.growth.toFixed(1)+' / last star '+highest+' / longest empty '+longest.toFixed(2)+'s / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL FLOW · '+e.stack;}finally{gestureAt('pointercancel',0,0);button.disabled=false;}}
+$('flowTrial').addEventListener('click',flowTrial);
+
+async function flow2Trial(){const button=$('flow2Trial'),log=$('runLog');button.disabled=true;try{
+ const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&pace=flow2&qa=gravity';await loaded;focusGame();await waitPlayfieldReady();
+ const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(130);let w=worldSnapshot();if(w.pace!=='flow2')throw Error('Wrong pacing');const opening=w.active.filter(s=>s.targetable).length;
+ let fastest=[],gathered=0;for(let cycle=0;cycle<3;cycle++){
+  focusGame();w=worldSnapshot();const g=w.gravity,r=doc.getElementById('app').getBoundingClientRect();gestureAt('pointerdown',r.left+g.x,r.top+g.y);await delay(460);w=worldSnapshot();
+  const count=w.active.filter(s=>s.targetable&&Math.hypot(s.x-g.x,s.y-g.y)<=g.radius*(.78+.14*w.level)+2).length;
+  if(!w.gathering||count<4)throw Error('CORE failed to gather real stars');gathered=Math.max(gathered,count);gestureAt('pointerup',r.left+g.x,r.top+g.y);await delay(60);await starTap();
+  const began=worldSnapshot().elapsed,deadline=performance.now()+1800;let ready=false;
+  while(performance.now()<deadline){await delay(50);w=worldSnapshot();const points=w.active.filter(s=>s.targetable&&s.state!=='ARMED');if(points.some(p=>points.filter(q=>Math.hypot(p.x-q.x,p.y-q.y)<=g.radius*.66).length>=3)){ready=true;fastest.push(w.elapsed-began);break;}}
+  if(!ready)throw Error('No next three-star group');log.textContent='FLOW2 · '+(cycle+1)+' cycles / gathered '+gathered+' / ready '+fastest.map(n=>n.toFixed(2)).join(', ')+'s';await delay(650);
+ }
+ if(worldSnapshot().cells!==3)throw Error('Short gathering spent a blast');
+ log.textContent='PASS FLOW2 · opening '+opening+' / 3 gather-tap cycles / gathered '+gathered+' / next 3-star group '+fastest.map(n=>n.toFixed(2)).join(', ')+'s / impulses 3 / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL FLOW2 · '+e.stack;}finally{gestureAt('pointercancel',0,0);button.disabled=false;}}
+$('flow2Trial').addEventListener('click',flow2Trial);
+
+async function flow3Trial(){const button=$('flow3Trial'),log=$('runLog');button.disabled=true;try{
+ const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&pace=flow3&qa=stream';await loaded;focusGame();await waitPlayfieldReady();
+ const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(1000);let w=worldSnapshot();if(w.pace!=='flow3')throw Error('Wrong pacing');
+ const inView=s=>s.x>=16&&s.x<=width-16&&s.y>=100&&s.y<=height-80,base=w.active.filter(inView).length,g=w.gravity,r=doc.getElementById('app').getBoundingClientRect();
+ gestureAt('pointerdown',r.left+g.x,r.top+g.y);await delay(800);w=worldSnapshot();const held=w.active.filter(inView).length;
+ if(!w.gathering||held<=base)throw Error('Holding CORE did not add visible stars');gestureAt('pointerup',r.left+g.x,r.top+g.y);await delay(180);w=worldSnapshot();if(w.gathering||w.cells!==3)throw Error('Release did not stop the stream boost cleanly');
+ const lastId=Math.max(...w.active.map(s=>s.id));await starTap();const at=worldSnapshot().elapsed,deadline=performance.now()+1800;let arrival=null;
+ while(performance.now()<deadline){await delay(40);w=worldSnapshot();if(w.active.some(s=>s.id>lastId&&s.targetable&&inView(s))){arrival=w.elapsed-at;break;}}
+ // A hold can leave more stars than the ordinary cap; use them before resupply.
+ let taps=1;while(arrival===null&&taps<8){focusGame();await starTap();taps++;await delay(200);w=worldSnapshot();if(w.active.some(s=>s.id>lastId&&s.targetable&&inView(s)))arrival=w.elapsed-at;}
+ if(arrival===null||w.growth<=0)throw Error('Tap loop failed to create new arrivals');
+ log.textContent='PASS STREAM · visible stars '+base+' → '+held+' during hold / '+taps+' taps / new stars during play / impulses 3 / growth '+w.growth.toFixed(1)+' / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL STREAM · '+e.stack;}finally{gestureAt('pointercancel',0,0);button.disabled=false;}}
+$('flow3Trial').addEventListener('click',flow3Trial);
+
+async function flow4Trial(){const button=$('flow4Trial'),log=$('runLog');button.disabled=true;try{
+ const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&pace=flow4&qa=continuous';await loaded;focusGame();await waitPlayfieldReady();
+ const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(1000);let w=worldSnapshot();if(w.pace!=='flow4')throw Error('Wrong pacing');const g=w.gravity,r=doc.getElementById('app').getBoundingClientRect();
+ gestureAt('pointerdown',r.left+g.x,r.top+g.y);await delay(4000);const middle=worldSnapshot().active.length;await delay(4000);w=worldSnapshot();const dense=w.active.length;
+ if(dense<=18||dense<=middle)throw Error('Stream count '+middle+' → '+dense+' / elapsed '+w.elapsed+' / hold '+w.gathering);gestureAt('pointerup',r.left+g.x,r.top+g.y);const lastId=Math.max(...w.active.map(s=>s.id));await delay(1300);w=worldSnapshot();if(Math.max(...w.active.map(s=>s.id))<=lastId)throw Error('Normal stream stopped after releasing CORE');
+ log.textContent='STREAM · 4s '+middle+' stars → 8s '+dense+' stars / release keeps arrivals';
+ let chain=0,rush=false;for(let i=0;i<8&&chain<5;i++){focusGame();await starTap();await delay(350);w=worldSnapshot();chain=Math.max(chain,Number(doc.getElementById('chainValue').textContent)||0);rush ||= doc.getElementById('impulseReady').textContent.includes('×3')||doc.getElementById('coachTitle').textContent.includes('RUSH');}
+ if(chain<5||!rush)throw Error('No chain-triggered meteor rush observed');
+ log.textContent='PASS CONTINUOUS · 4s '+middle+' stars → 8s '+dense+' stars / normal arrivals after release / CHAIN '+chain+' / meteor rush / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL CONTINUOUS · '+e.stack;}finally{gestureAt('pointercancel',0,0);button.disabled=false;}}
+$('flow4Trial').addEventListener('click',flow4Trial);
+
+async function multiClick(n){focusGame();const w=worldSnapshot(),r=frame.contentDocument.getElementById('app').getBoundingClientRect();for(let i=0;i<n;i++){gestureAt('pointerdown',r.left+w.gravity.x,r.top+w.gravity.y);await delay(25);gestureAt('pointerup',r.left+w.gravity.x,r.top+w.gravity.y);if(i<n-1)await delay(70);}}
+async function flow5Trial(){const button=$('flow5Trial'),log=$('runLog');button.disabled=true;try{
+ const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&pace=flow5&qa=gestures';await loaded;focusGame();await waitPlayfieldReady();const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(1000);
+ if(doc.getElementById('overdrive'))throw Error('OVER DRIVE action button still exists');await multiClick(2);const novaDeadline=performance.now()+3000;while(worldSnapshot().novaCount!==1&&performance.now()<novaDeadline)await delay(50);if(worldSnapshot().novaCount!==1)throw Error('Double click failed to fire NOVA');
+ const w=worldSnapshot(),r=doc.getElementById('app').getBoundingClientRect();gestureAt('pointerdown',r.left+w.gravity.x,r.top+w.gravity.y);await delay(4500);gestureAt('pointerup',r.left+w.gravity.x,r.top+w.gravity.y);
+ let taps=0;while(!worldSnapshot().driveReady&&taps<14){focusGame();if(doc.getElementById('signalType').textContent.includes('VOID')&&!doc.getElementById('signalBanner').hidden){await delay(250);continue;}await starTap();taps++;await delay(600);}
+ if(!worldSnapshot().driveReady)throw Error('Player inputs did not qualify DRIVE');const before=worldSnapshot(),ids=before.active.filter(s=>s.x>=0&&s.x<=width&&s.y>=0&&s.y<=height).map(s=>s.id);await multiClick(3);await delay(200);const after=worldSnapshot();
+ if(after.drives!==1||after.novaCount!==before.novaCount||after.freeze<=0||after.active.some(s=>ids.includes(s.id)))throw Error('Triple did not execute an isolated screen burst');const remaining=after.remaining;await delay(1000);const held=worldSnapshot();if(Math.abs(held.remaining-remaining)>.03||held.active.length===0)throw Error('Countdown or moving supply was incorrectly frozen');
+ log.textContent='PASS GESTURES · double NOVA / triple OVER DRIVE / button removed / '+ids.length+' on-screen stars cleared / countdown '+remaining.toFixed(2)+'s unchanged / moving supply / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL GESTURES · '+e.stack;}finally{gestureAt('pointercancel',0,0);button.disabled=false;}}
+$('flow5Trial').addEventListener('click',flow5Trial);
+
+async function relayTrial(){const button=$('relayTrial'),log=$('runLog');button.disabled=true;const samples=[];try{
+ $('viewport').value='390,844';setViewport();
+ const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=12345678&rules=R4&pace=flow5&supply=relay1&qa=relay';await loaded;focusGame();await waitPlayfieldReady();const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(2200);
+ const inView=s=>s.x>=16&&s.x<=width-16&&s.y>=100&&s.y<=height-90;
+ if(worldSnapshot().supply!=='relay1')throw Error('Wrong supply version');
+ for(let i=0;i<3;i++){focusGame();const clearBy=performance.now()+3500;while(worldSnapshot().waves>0||worldSnapshot().relayBirths.length){if(performance.now()>clearBy)throw Error('Previous chain did not settle');await delay(20);}const sampleWorld=worldSnapshot(),sampleTarget=sampleWorld.active.filter(s=>s.targetable&&s.state==='ORBIT'&&inView(s)).sort((a,b)=>b.id-a.id)[0];if(!sampleTarget)throw Error('No stable target for timing sample');const rect=doc.getElementById('app').getBoundingClientRect(),beforeActions=Number(doc.getElementById('nodeCount').textContent);gestureAt('pointerdown',rect.left+sampleTarget.x,rect.top+sampleTarget.y);await delay(45);gestureAt('pointerup',rect.left+sampleTarget.x,rect.top+sampleTarget.y);const released=worldSnapshot();if(Number(doc.getElementById('nodeCount').textContent)!==beforeActions+1||released.relayBirths.length!==2)throw Error('Sample did not confirm an accepted tap and its refill reservation');const id=Math.max(...released.active.map(s=>s.id)),at=performance.now(),end=at+450;let elapsed=null;while(performance.now()<end){await delay(15);const w=worldSnapshot();if(w.active.some(s=>s.id>id&&inView(s))){elapsed=performance.now()-at;break;}}if(elapsed===null)throw Error('Next visible star missed the 450ms observation limit');samples.push(Math.round(elapsed));await delay(650);}
+ await multiClick(2);await delay(700);if(worldSnapshot().novaCount!==1)throw Error('NOVA failed');
+ const key=type=>doc.getElementById('coreTarget').dispatchEvent(new frame.contentWindow.KeyboardEvent(type,{code:'Space',bubbles:true,cancelable:true}));key('keydown');await delay(2400);key('keyup');let taps=0;while(!worldSnapshot().driveReady&&taps<20){focusGame();if(doc.getElementById('signalType').textContent.includes('VOID')&&!doc.getElementById('signalBanner').hidden){await delay(250);continue;}await starTap();taps++;await delay(480);}if(!worldSnapshot().driveReady)throw Error('Could not qualify drive');
+ const before=worldSnapshot();await multiClick(3);await delay(250);const after=worldSnapshot();if(after.drives!==1||after.novaCount!==before.novaCount||after.freeze<=0||after.active.length<2)throw Error('DRIVE or immediate refill failed');const remaining=after.remaining;await delay(700);const held=worldSnapshot();if(Math.abs(held.remaining-remaining)>.03||held.elapsed<=after.elapsed||held.active.length===0)throw Error('Countdown/supply stopped');
+ log.textContent='PASS RELAY · visible arrival observations '+samples.join(' / ')+' ms (accepted taps + refill reservations + HUD polling) · NOVA / triple DRIVE · next stars '+after.active.length+' during countdown freeze · errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL RELAY · '+e.stack+' / samples '+samples.join(',');}finally{gestureAt('pointercancel',0,0);button.disabled=false;}}
+ $('relayTrial').addEventListener('click',relayTrial);
+
+async function signalLayoutTrial(){const button=$('signalLayoutTrial'),log=$('runLog'),savedViewport=$('viewport').value;button.disabled=true;try{
+ await relayTrial();if(!log.textContent.startsWith('PASS RELAY'))throw Error(log.textContent);await delay(2600);const doc=frame.contentDocument,end=performance.now()+15000;
+ while(doc.getElementById('signalBanner').hidden||Number.parseInt(doc.getElementById('signalClock').textContent)<2){focusGame();if(performance.now()>end)throw Error('No stable signal window');await delay(50);}
+ const signal=doc.getElementById('signalType').textContent;await allSizes();const text=$('sizesLog').textContent;if((text.match(/全 17 項目 OK/g)||[]).length!==7)throw Error(text);$('viewport').value=savedViewport;setViewport();await new Promise(resolve=>frame.contentWindow.requestAnimationFrame(()=>frame.contentWindow.requestAnimationFrame(resolve)));run();log.textContent='PASS SIGNAL LAYOUT · grown CORE / '+signal+' / all seven viewports / no overlap';
+ }catch(e){log.textContent='FAIL SIGNAL LAYOUT · '+e.stack;}finally{button.disabled=false;}}
+ $('signalLayoutTrial').addEventListener('click',signalLayoutTrial);
+
+async function loadSurge(){const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&pace=flow5&supply=relay1&power=surge1&qa=surge';await loaded;focusGame();await waitPlayfieldReady();const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(200);return doc;}
+function surgeKey(type){const doc=frame.contentDocument;doc.getElementById('coreTarget').dispatchEvent(new frame.contentWindow.KeyboardEvent(type,{code:'Space',bubbles:true,cancelable:true}));}
+async function surgeTrial(){const button=$('surgeTrial'),log=$('runLog');button.disabled=true;try{$('viewport').value='390,844';setViewport();await loadSurge();const initial=worldSnapshot();if(initial.power!=='surge1'||initial.driveRemaining!==3||initial.streamBoost!==4)throw Error('Initial stock or stream power wrong');
+ const holdSamples=[];for(let attempt=0;worldSnapshot().holds<5&&attempt<12;attempt++){focusGame();const doc=frame.contentDocument;if(!doc.getElementById('signalBanner').hidden&&doc.getElementById('signalType').textContent.includes('VOID')){await delay(350);attempt--;continue;}const prior=worldSnapshot().holds,at=performance.now();surgeKey('keydown');await delay(1050);const actualMs=performance.now()-at;surgeKey('keyup');await delay(150);holdSamples.push({actualMs,before:prior,after:worldSnapshot().holds});}log.dataset.surgeHolds=JSON.stringify(holdSamples);let after=worldSnapshot();if(after.holds<5||!after.impulseUnlimited||after.streamBoost<=4||after.driveCapacity!==3+after.level)throw Error('Unlimited impulses or growth rewards failed '+JSON.stringify({holds:after.holds,level:after.level,boost:after.streamBoost}));
+ let taps=0;while(!worldSnapshot().driveReady&&taps<18){focusGame();if(frame.contentDocument.getElementById('signalType').textContent.includes('VOID')&&!frame.contentDocument.getElementById('signalBanner').hidden){await delay(200);continue;}await starTap();await delay(500);taps++;}if(!worldSnapshot().driveReady)throw Error('Could not qualify drive');const before=worldSnapshot();await multiClick(3);await delay(200);after=worldSnapshot();if(after.drives!==1||after.driveRemaining!==after.driveCapacity-1||after.freeze<=0)throw Error('Drive stock was not consumed once');
+ const remaining=after.remaining;await delay(750);const held=worldSnapshot();if(Math.abs(held.remaining-remaining)>.03)throw Error('Countdown did not freeze');log.dataset.surge=JSON.stringify({initial,before,after,held});log.textContent='PASS SURGE · five impulses / stream ×4→×'+after.streamBoost+' / DRIVE capacity 3→'+after.driveCapacity+' / remaining '+after.driveRemaining+' / countdown frozen / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL SURGE · '+e.stack;}finally{surgeKey('keyup');button.disabled=false;}}
+$('surgeTrial').addEventListener('click',surgeTrial);
+async function surgeAuditTrial(){const button=$('surgeAuditTrial'),log=$('runLog');button.disabled=true;try{
+ let doc=await loadSurge();let w=worldSnapshot(),g=w.gravity;gestureAt('pointerdown',g.x,g.y);await delay(650);if(!worldSnapshot().gathering)throw Error('Valid hold not gathering');gestureAt('pointermove',g.x+65,g.y);await delay(400);
+ if(worldSnapshot().gathering||doc.getElementById('coreStatus').textContent.includes('流星増加')||!doc.getElementById('chargeMeter').hidden||doc.getElementById('app').classList.contains('charge-ready'))throw Error('Drag retains stream or ready cue');gestureAt('pointerup',g.x+65,g.y);
+ const untilVoid=performance.now()+30000;while(doc.getElementById('signalBanner').hidden||!doc.getElementById('signalType').textContent.includes('VOID')){focusGame();if(performance.now()>untilVoid)throw Error('VOID did not appear');await delay(50);}surgeKey('keydown');await delay(1050);w=worldSnapshot();if(w.gathering||doc.getElementById('coreStatus').textContent.includes('流星増加')||!doc.getElementById('chargeMeter').hidden||doc.getElementById('app').classList.contains('charge-ready'))throw Error('VOID retains stream or ready cue');surgeKey('keyup');
+ await surgeTrial();if(!log.textContent.startsWith('PASS SURGE'))throw Error(log.textContent);doc=frame.contentDocument;const deadline=performance.now()+24000;
+ while(!worldSnapshot().driveReady){focusGame();if(performance.now()>deadline)throw Error('Second DRIVE never ready');const isVoid=!doc.getElementById('signalBanner').hidden&&doc.getElementById('signalType').textContent.includes('VOID');if(isVoid){await delay(200);continue;}surgeKey('keydown');await delay(1000);surgeKey('keyup');await delay(160);}
+ await multiClick(3);await delay(5200);const before=worldSnapshot();await multiClick(3);await delay(180);const after=worldSnapshot(),message=frame.contentDocument.getElementById('eventSubtitle').textContent;if(before.drives!==2||after.drives!==2||after.driveRemaining<=0||!message.includes('再充填')||message.includes('使用済み'))throw Error('Second-use cooldown message wrong '+message);
+ log.dataset.surgeAudit=JSON.stringify({before,after,message});log.textContent='PASS SURGE AUDIT · drag / VOID / five+ impulses / growth ×4→×8 / two DRIVE uses / remaining '+after.driveRemaining+' / '+message+' / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL SURGE AUDIT · '+e.stack;}finally{gestureAt('pointercancel',0,0);surgeKey('keyup');button.disabled=false;}}
+$('surgeAuditTrial').addEventListener('click',surgeAuditTrial);
+$('surgeResultTrial').addEventListener('click',async()=>{const button=$('surgeResultTrial'),log=$('runLog');button.disabled=true;try{await loadSurge();for(let i=0;i<4;i++){focusGame();surgeKey('keydown');await delay(1050);surgeKey('keyup');await delay(150);}const deadline=performance.now()+95000,doc=frame.contentDocument;while(doc.getElementById('result').hidden){focusGame();if(performance.now()>deadline)throw Error('Result deadline exceeded');await delay(200);}const tip=doc.getElementById('expeditionTip').textContent;if(!tip.includes('3回クリック')||tip.includes('星を選'))throw Error('Result hint wrong '+tip);log.textContent='PASS RESULT GUIDE · '+tip;run();}catch(e){log.textContent='FAIL RESULT GUIDE · '+e.stack;}finally{surgeKey('keyup');button.disabled=false;}});
+
+$('surgeHoldSizes').addEventListener('click',async()=>{const button=$('surgeHoldSizes');button.disabled=true;try{focusGame();const doc=frame.contentDocument,deadline=performance.now()+5000;while(!doc.getElementById('signalBanner').hidden&&doc.getElementById('signalType').textContent.includes('VOID')){if(performance.now()>deadline)throw Error('VOID did not settle');await delay(50);}surgeKey('keydown');await delay(450);if(!worldSnapshot().gathering)throw Error('Held stream not active');await allSizes();const sizes=$('sizesLog').textContent;if((sizes.match(/全 17 項目 OK/g)||[]).length!==7||!worldSnapshot().gathering)throw Error('Held layout failed '+sizes);$('sizesLog').dataset.held=sizes;$('runLog').textContent='PASS HELD LAYOUT · stream ×'+worldSnapshot().streamBoost+' / all seven viewports / 17 checks each';}catch(e){$('runLog').textContent='FAIL HELD LAYOUT · '+e.stack;}finally{surgeKey('keyup');$('surgeHoldPreview').dataset.holding='0';$('surgeHoldPreview').textContent='長押し演出プレビュー';button.disabled=false;}});
+
+$('surgeHoldPreview').addEventListener('click',async()=>{const button=$('surgeHoldPreview');if(button.dataset.holding==='1'){surgeKey('keyup');button.dataset.holding='0';button.textContent='長押し演出プレビュー';return;}if(worldSnapshot()?.power!=='surge1')await loadSurge();focusGame();const doc=frame.contentDocument;if(!doc.getElementById('result').hidden)doc.getElementById('reconnect').click();else if(!doc.getElementById('connect').hidden)doc.getElementById('connect').click();surgeKey('keydown');button.dataset.holding='1';button.textContent='長押しを終了';});
+
+
+
+
+async function tempoTrial(){const button=$('tempoTrial'),log=$('runLog');button.disabled=true;try{
+ const loaded=new Promise(resolve=>frame.addEventListener('load',resolve,{once:true}));frame.src='../index.html?challenge=A7F291C8&rules=R4&pace=flow5&qa=tempo';await loaded;focusGame();await waitPlayfieldReady();const doc=frame.contentDocument;doc.getElementById('connect').click();await delay(200);
+ const key=type=>doc.getElementById('coreTarget').dispatchEvent(new frame.contentWindow.KeyboardEvent(type,{code:'Space',bubbles:true,cancelable:true}));
+ const keys=async n=>{for(let i=0;i<n;i++){key('keydown');await delay(30);key('keyup');if(i<n-1)await delay(70);}};
+ await keys(2);if(doc.getElementById('novaReadyText').textContent!=='×2 → NOVA')throw Error('Pending feedback missing');const pending=doc.getElementById('novaReadyText').textContent;await delay(500);if(worldSnapshot().novaCount!==1)throw Error('Space double failed');
+ let w=worldSnapshot(),r=doc.getElementById('app').getBoundingClientRect(),x=r.left+w.gravity.x,y=r.top+w.gravity.y,cells=w.cells;gestureAt('pointerdown',x,y);await delay(1050);gestureAt('pointermove',x+80,y);gestureAt('pointerup',x+80,y);await delay(160);if(worldSnapshot().cells!==cells)throw Error('Dragged hold spent a cell');
+ // Long hold increases births; existing paths and travel speed remain unchanged.
+ key('keydown');await delay(2400);key('keyup');let taps=0;while(!worldSnapshot().driveReady&&taps<20){focusGame();if(doc.getElementById('signalType').textContent.includes('VOID')&&!doc.getElementById('signalBanner').hidden){await delay(250);continue;}await starTap();taps++;await delay(480);}if(!worldSnapshot().driveReady)throw Error('Could not qualify drive');
+ const before=worldSnapshot(),ids=before.active.filter(s=>s.x>=0&&s.x<=width&&s.y>=0&&s.y<=height).map(s=>s.id);await keys(3);await delay(160);const after=worldSnapshot();if(after.drives!==1||after.novaCount!==before.novaCount||after.freeze<=0||after.active.some(s=>ids.includes(s.id)&&s.x>=0&&s.x<=width&&s.y>=0&&s.y<=height))throw Error('Space triple failed isolation or screen burst '+JSON.stringify({before:{drives:before.drives,nova:before.novaCount},after:{drives:after.drives,nova:after.novaCount,freeze:after.freeze},remaining:after.active.filter(s=>ids.includes(s.id)).map(s=>s.id)}));
+ const remaining=after.remaining;await delay(1100);const supply=worldSnapshot();if(Math.abs(supply.remaining-remaining)>.03||supply.active.length===0||supply.elapsed<=after.elapsed)throw Error('Supply or world time stopped');
+ log.textContent='PASS TEMPO · Space double NOVA / triple DRIVE / '+pending+' / drag cells '+cells+'→'+worldSnapshot().cells+' / visible targets cleared (off-screen excluded) / supply '+supply.active.length+' / countdown unchanged / errors '+errors.length;run();
+ }catch(e){log.textContent='FAIL TEMPO · '+e.stack;}finally{gestureAt('pointercancel',0,0);button.disabled=false;}}
+$('tempoTrial').addEventListener('click',tempoTrial);
+
+
 
 $('play').addEventListener('click',async()=>{
  $('play').disabled=true;const doc=frame.contentDocument;focusGame();if(visible(doc.getElementById('result')))doc.getElementById('reconnect').click();else if(visible(doc.getElementById('connect')))doc.getElementById('connect').click();
@@ -301,7 +475,7 @@ $('play').addEventListener('click',async()=>{
  if(visible(banner)&&!banner.classList.contains('solved')){if(kind.includes('VOID'))await delay(220);else if(kind.includes('PHASE SHIFT')){await holdTest();await delay(360);}else if(kind.includes('OVERLOAD')){if(doc.getElementById('coreStatus').textContent.includes('NOVA READY')){await novaTest();await delay(370);}else await delay(200);}else if(kind.includes('JAM')){await tapTest();await delay(550);}else if(kind.includes('PULSE')){if(banner.classList.contains('beat')){await tapTest();await delay(400);}else await delay(40);}}
  else {const action=cycles%4;if(action===2)await holdTest();else if(action===3)await novaTest();else await starTap();await delay(action===2?370:550);}
  }else{await starTap();await delay(530);await starTap();await delay(530);await holdTest();await delay(370);await novaTest();await delay(600);}
- const drive=doc.getElementById('overdrive');if(!drive.disabled&&!drive.hidden){drive.click();await selectArmed(3);}cycles++;
+ const drive=doc.getElementById('overdrive');if(drive&&!drive.disabled&&!drive.hidden){drive.click();await selectArmed(3);}cycles++;
  $('runLog').textContent='実ブラウザ／合成ポインター検証中 '+((performance.now()-start)/1000).toFixed(1)+'s / '+cycles+' cycles\nTIME '+doc.getElementById('timeValue').textContent+' / SYNC '+doc.getElementById('syncValue').textContent+' / COMBO '+doc.getElementById('comboValue').textContent+(duel?' / RIVAL '+doc.getElementById('rivalScore').textContent+' / DELTA '+doc.getElementById('duelDelta').textContent+' / OVERTAKES '+overtakes:'');
  }
  await delay(1200);run();$('runLog').textContent='成長シナリオ完了（合成ポインター。実機ではありません）\n'+doc.getElementById('resultRank').textContent+' / '+doc.getElementById('resultName').textContent+' / SYNC '+doc.getElementById('resultSync').textContent+'%\nMAX COMBO '+doc.getElementById('resultCombo').textContent+' / NOVA '+doc.getElementById('resultNova').textContent+' / '+doc.getElementById('resultDrive').textContent+'\n'+(worldSnapshot()?.rules==='R4'?doc.getElementById('universeSignature').textContent:doc.getElementById('galaxyResult').textContent)+'\nSCORE '+doc.getElementById('resultScore').textContent+' / '+doc.getElementById('resultDelta').textContent+(duel?'\n'+doc.getElementById('duelOutcome').textContent+' / '+doc.getElementById('duelFinalDelta').textContent+' / OVERTAKES '+overtakes:'')+'\nRESULT visible: '+visible(doc.getElementById('result'))+' / errors: '+errors.length;

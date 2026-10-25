@@ -1,3 +1,26 @@
+# ASTRAL CORE — surge1 audited
+
+Play: https://dicek9750.github.io/astral-core-demo/
+
+## 2026-10-25 audited release
+
+- CORE長押しで流星の出現頻度が通常の4倍。CORE成長値10 / 28 / 56 / 98で5 / 6 / 7 / 8倍へ強化。星の移動速度と軌道は維持。
+- 中央へ流れ込む光と倍率表示で長押しを可視化。動きを減らす設定にも対応。
+- CORE IMPULSEは回数無制限。0.9〜1.55秒を目安に離す。VOID中とドラッグ中断後は能力と案内・光の状態を一致。
+- ダブルクリック／タップでNOVA。トリプルクリック／タップでOVER DRIVE（一斉起爆＋5秒間カウントダウン停止）。Space短押しも同じ判定。
+- OVER DRIVEは初期3回、各成長段階で1回追加。獲得枠は累計最大7回分、使った回数は差し引く。ENERGY80 / SYNC35 / 起爆8天体以上 / 再充填14秒。
+- 起爆後は通常60ms / 140ms後に次の星を補充。連打は予約をまとめ、星の数で流入を停止しない。
+- DRIVEの残数・不足条件、ドラッグ中断、VOID中、結果画面の4つの案内修正を再監査。
+
+操作プレビュー: [Viewport QA](tests/preview.html)。検証環境の合成PointerEvent / KeyboardEventと実画面確認を区別しています。
+旧共有URLの仕様は維持。新共有は power=surge1 / supply=relay1 / gver=4f5s1、記録最大125秒。
+
+検証の詳細と公開HTMLのSHA-256は [release.json](release.json)。実機タッチ・音質・端末FPSは未確認です。
+
+---
+
+以下は旧公開版の履歴です。操作方法は上記の最新版を参照してください。
+
 # ASTRAL CORE / COSMIC SCALE ASCENSION
 60秒から始め、天体の爆発連鎖で時間を延ばし、小さなCOREを成長させるミニゲーム。
 公開: https://dicek9750.github.io/astral-core-demo/

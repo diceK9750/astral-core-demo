@@ -1,0 +1,38 @@
+{
+  "release": "surge1-audited-20261025",
+  "rules": "R4",
+  "pace": "flow5",
+  "supply": "relay1",
+  "power": "surge1",
+  "gver": "4f5s1",
+  "sourceSHA256": "fbff005b0d083e2d7c0c2f428feba9430865844ce244c632755802aa3a419da5",
+  "heldStream": [
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "growthThresholds": [
+    0,
+    10,
+    28,
+    56,
+    98
+  ],
+  "impulse": "unlimited",
+  "drive": {
+    "initial": 3,
+    "perMilestone": 1,
+    "maxLifetimeCapacity": 7,
+    "freezeSeconds": 5
+  },
+  "verification": {
+    "nodeSuites": 27,
+    "nodeChecks": 2541,
+    "browser": "four discrepancies, growth, impulse, stock, held layouts and result guide verified before publication",
+    "physicalTouch": false,
+    "audioQuality": false,
+    "deviceFPS": false
+  }
+}
