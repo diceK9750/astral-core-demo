@@ -1,11 +1,11 @@
 {
-  "release": "surge1-space-reaudit-20261025",
+  "release": "surge1-keyboard-boot-audit-20261025",
   "rules": "R4",
   "pace": "flow5",
   "supply": "relay1",
   "power": "surge1",
   "gver": "4f5s1",
-  "sourceSHA256": "a628c328d4a44c7e352f0a50596a7be71f726bb3ff5087859c56ad0baf95ec14",
+  "sourceSHA256": "6db69bdd7318c59cb22b06eb1064243e031d9a286bc4980a0a0aeaa7cc260a3b",
   "heldStream": [
     4,
     5,
@@ -27,12 +27,14 @@
     "maxLifetimeCapacity": 7,
     "freezeSeconds": 5
   },
-  "keyboard": "FLOW5 Space automatically focuses CORE: single normal input, double NOVA, triple OVER DRIVE, hold stream + IMPULSE. Ctrl/Alt/Meta shortcuts excluded on CORE and body; modified keyup cancels keyboard hold only.",
+  "keyboard": "Plain Space auto-focuses CORE: single no DRIVE, double NOVA, triple OVER DRIVE, hold stream + IMPULSE. Ctrl/Alt/Meta/Shift excluded in key and semantic-click paths. Modifier keydown immediately cancels keyboard hold; pointer ownership preserved.",
+  "preview": "Ready-state guard, observer cleanup and early own-document error capture. Identical observer exception reproduced in script-free static iframe fixture, outside game code.",
   "verification": {
-    "nodeSuites": 28,
-    "nodeChecks": 2568,
-    "inputChecks": 27,
-    "addedInputChecks": 12,
+    "nodeSuites": 29,
+    "nodeChecks": 2611,
+    "inputChecks": 48,
+    "previewChecks": 21,
+    "browserSyntheticInputChecks": 15,
     "physicalTouch": false,
     "audioQuality": false,
     "deviceFPS": false
