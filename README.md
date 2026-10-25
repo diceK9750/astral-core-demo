@@ -1,3 +1,24 @@
+# ASTRAL CORE — public input audit
+
+Play: https://dicek9750.github.io/astral-core-demo/
+
+## 2026-10-25 public-play audit
+
+公開画面で、CORE以外にフォーカスがあるとSpace1回でOVER DRIVEが発動してしまう問題を修正しました。
+FLOW5のSpace操作はCOREへ自動フォーカスし、1回は通常入力、2回でNOVA、3回でOVER DRIVE、長押しで流星増加・CORE IMPULSEへ統一。残数は3回操作が成立した時だけ1回消費します。
+テキスト入力・他の操作ボタン・修飾キー・ドラッグ中断の扱いと、旧R2などのショートカットは維持しています。
+
+成長による流入4→8倍、IMPULSE無制限、OVER DRIVE初期3回＋各成長段階1回追加、5秒停止、起爆後の補充、星の速度・軌道は維持。
+前回の4件（残数案内・ドラッグ中断・VOID演出・結果説明）も再監査しています。
+
+検証：全28スイート・2,556項目成功。追加15項目でSpaceの焦点・回数・長押し・中断・旧操作との互換を検証。ブラウザー実キーでも1回は残数維持、2回NOVA、3回で残数7→6を確認。
+検証環境の合成入力と実キー確認を区別し、実機タッチ・音質・端末FPSは未確認です。
+公開版の識別と正本HTMLのSHA-256は [release.json](release.json) を参照してください。
+
+---
+
+以下は前回公開までの履歴です。
+
 # ASTRAL CORE — surge1 audited
 
 Play: https://dicek9750.github.io/astral-core-demo/

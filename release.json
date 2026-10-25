@@ -1,11 +1,11 @@
 {
-  "release": "surge1-audited-20261025",
+  "release": "surge1-live-input-audit-20261025",
   "rules": "R4",
   "pace": "flow5",
   "supply": "relay1",
   "power": "surge1",
   "gver": "4f5s1",
-  "sourceSHA256": "fbff005b0d083e2d7c0c2f428feba9430865844ce244c632755802aa3a419da5",
+  "sourceSHA256": "b82e39dabd07fd4a94a6bd9f898d081abb1953ea8b555a09e7b4bd7c6747cf0e",
   "heldStream": [
     4,
     5,
@@ -27,10 +27,11 @@
     "maxLifetimeCapacity": 7,
     "freezeSeconds": 5
   },
+  "keyboard": "FLOW5 Space focuses CORE; single normal input, double NOVA, triple OVER DRIVE, held meteor stream and impulse",
   "verification": {
-    "nodeSuites": 27,
-    "nodeChecks": 2541,
-    "browser": "four discrepancies, growth, impulse, stock, held layouts and result guide verified before publication",
+    "nodeSuites": 28,
+    "nodeChecks": 2556,
+    "newInputChecks": 15,
     "physicalTouch": false,
     "audioQuality": false,
     "deviceFPS": false
