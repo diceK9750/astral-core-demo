@@ -37,7 +37,7 @@
 <div class="layout">
 <section class="preview-area" aria-label="デモの表示領域">
 <div id="readout" class="viewport-readout"></div>
-<div id="frameWrap" class="frame-wrap"><iframe id="demo" title="ASTRAL CORE interactive demo" allow="autoplay" src="../index.html?qa=preview"></iframe></div>
+<div id="frameWrap" class="frame-wrap"><template id="demoTemplate"><iframe id="demo" title="ASTRAL CORE interactive demo" allow="autoplay" src="../index.html?qa=preview"></iframe></template></div>
 </section>
 <section class="results" aria-label="検証結果">
 <h2>Run verification</h2><pre id="runLog" class="summary" style="white-space:pre-wrap">待機中</pre><pre id="sizesLog" class="summary" style="white-space:pre-wrap"></pre><h2>Layout checks</h2>
@@ -60,7 +60,9 @@
 <script>
 (()=>{
 'use strict';
-const $=id=>document.getElementById(id),frame=$('demo'),wrap=$('frameWrap');
+const $=id=>document.getElementById(id),wrap=$('frameWrap'),frame=$('demoTemplate').content.querySelector('iframe');
+function mountPreviewFrame(){const controls=[...document.querySelectorAll('.controls button,.controls select,.controls input')].map(control=>({control,disabled:control.disabled}));for(const {control}of controls)control.disabled=true;frame.addEventListener('load',()=>{for(const {control,disabled}of controls)control.disabled=disabled;},{once:true});const mount=()=>{if(!frame.isConnected)wrap.appendChild(frame);},afterLoad=()=>requestAnimationFrame(()=>requestAnimationFrame(mount));if(document.readyState==='complete')afterLoad();else window.addEventListener('load',afterLoad,{once:true});}
+mountPreviewFrame();
 let width=390,height=844,loaded=false,errors=[],unlisten=()=>{},cancelMeasurement=()=>{},layoutTimer=0,layoutDeadline=0;
 function clearLayoutWait(){clearTimeout(layoutTimer);layoutTimer=0;layoutDeadline=0;}
 function setViewport(){
@@ -441,6 +443,7 @@ async function spaceInputTrial(){const button=$('spaceInputTrial'),log=$('runLog
  check(initial.driveRemaining===3&&initial.streamBoost===4,'initial stock3 / stream4');
  for(const [modifier,code]of [['ctrlKey','ControlLeft'],['altKey','AltLeft'],['metaKey','MetaLeft'],['shiftKey','ShiftLeft']]){
   focusGame();await clearVoid();const before=worldSnapshot();emit('keydown','Space',{[modifier]:true},true);emit('keyup','Space',{[modifier]:true});emit('keydown','Space',{[modifier]:true});emit('keyup','Space',{[modifier]:true});await delay(60);check(!worldSnapshot().gathering&&worldSnapshot().holds===before.holds&&worldSnapshot().drives===before.drives,modifier+' body/core chord excluded');
+  for(let i=0;i<2;i++)doc.getElementById('coreTarget').dispatchEvent(new frame.contentWindow.MouseEvent('click',{detail:0,bubbles:true,cancelable:true,[modifier]:true}));await delay(60);check(worldSnapshot().novaCount===before.novaCount&&worldSnapshot().drives===before.drives&&!doc.getElementById('novaReadyText').textContent.includes('待機'),modifier+' semantic click excluded');
   emit('keydown','Space');await waitSurgeState(()=>worldSnapshot().gathering,'Normal hold did not gather');emit('keydown',code,{[modifier]:true});await waitSurgeState(()=>!worldSnapshot().gathering&&doc.getElementById('chargeMeter').hidden,'Modifier did not cancel rendered hold');emit('keyup',code);await delay(700);emit('keyup','Space');await delay(60);check(worldSnapshot().holds===before.holds&&worldSnapshot().drives===before.drives&&!worldSnapshot().gathering,modifier+' release order cannot revive impulse');
  }
  for(let attempts=0;worldSnapshot().holds<5&&attempts<12;attempts++){focusGame();await clearVoid();emit('keydown','Space');await delay(1050);emit('keyup','Space');await delay(150);}
@@ -494,7 +497,8 @@ async function playTrial(){
  $('play').disabled=true;let watch=null;
  try{if(!loaded)throw Error('デモの読み込み完了後に再実行してください。');await waitScenarioReady();const doc=frame.contentDocument,app=doc.getElementById('app'),stageMode=doc.getElementById('stageMode');if(!app||!stageMode)throw Error('デモの操作対象が未準備です。再読み込み後に再実行してください。');focusGame();if(visible(doc.getElementById('result')))doc.getElementById('reconnect').click();else if(visible(doc.getElementById('connect')))doc.getElementById('connect').click();
  const start=performance.now();let cycles=0,overtakes=0,lastLead='';const duel=app.classList.contains('duel'),casual=$('pilot').value==='casual';watch=new MutationObserver(()=>{const lead=stageMode.textContent;if(lead==='OVERTAKE'&&lastLead!==lead)overtakes++;lastLead=lead;});watch.observe(stageMode,{childList:true,subtree:true,characterData:true});if(duel)await delay(3000);const remote=app.classList.contains('remote');
- while(performance.now()-start<115000&&!visible(doc.getElementById('result'))){
+ while(performance.now()-start<180000&&!visible(doc.getElementById('result'))){
+ if(frame.contentDocument!==doc)throw Error('検証中にデモが切り替わりました。完走の証拠として扱いません。');
  if(visible(doc.getElementById('pausePanel')))doc.getElementById('resume').click();
  if(casual){await starTap();await delay(570);}else if(remote){const banner=doc.getElementById('signalBanner'),kind=doc.getElementById('signalType').textContent;
  if(visible(banner)&&!banner.classList.contains('solved')){if(kind.includes('VOID'))await delay(220);else if(kind.includes('PHASE SHIFT')){await holdTest();await delay(360);}else if(kind.includes('OVERLOAD')){if(doc.getElementById('coreStatus').textContent.includes('NOVA READY')){await novaTest();await delay(370);}else await delay(200);}else if(kind.includes('JAM')){await tapTest();await delay(550);}else if(kind.includes('PULSE')){if(banner.classList.contains('beat')){await tapTest();await delay(400);}else await delay(40);}}
@@ -503,7 +507,7 @@ async function playTrial(){
  const drive=doc.getElementById('overdrive');if(drive&&!drive.disabled&&!drive.hidden){drive.click();await selectArmed(3);}cycles++;
  $('runLog').textContent='実ブラウザ／合成ポインター検証中 '+((performance.now()-start)/1000).toFixed(1)+'s / '+cycles+' cycles\nTIME '+doc.getElementById('timeValue').textContent+' / SYNC '+doc.getElementById('syncValue').textContent+' / COMBO '+doc.getElementById('comboValue').textContent+(duel?' / RIVAL '+doc.getElementById('rivalScore').textContent+' / DELTA '+doc.getElementById('duelDelta').textContent+' / OVERTAKES '+overtakes:'');
  }
- await delay(1200);run();$('runLog').textContent='成長シナリオ完了（合成ポインター。実機ではありません）\n'+doc.getElementById('resultRank').textContent+' / '+doc.getElementById('resultName').textContent+' / SYNC '+doc.getElementById('resultSync').textContent+'%\nMAX COMBO '+doc.getElementById('resultCombo').textContent+' / NOVA '+doc.getElementById('resultNova').textContent+' / '+doc.getElementById('resultDrive').textContent+'\n'+(worldSnapshot()?.rules==='R4'?doc.getElementById('universeSignature').textContent:doc.getElementById('galaxyResult').textContent)+'\nSCORE '+doc.getElementById('resultScore').textContent+' / '+doc.getElementById('resultDelta').textContent+(duel?'\n'+doc.getElementById('duelOutcome').textContent+' / '+doc.getElementById('duelFinalDelta').textContent+' / OVERTAKES '+overtakes:'')+'\nRESULT visible: '+visible(doc.getElementById('result'))+' / errors: '+errors.length;
+ if(frame.contentDocument!==doc)throw Error('検証中にデモが切り替わりました。完走の証拠として扱いません。');if(!visible(doc.getElementById('result')))throw Error('検証時間の上限までに結果画面へ到達しませんでした。完走は未確認です。');await delay(1200);if(frame.contentDocument!==doc)throw Error('結果確認中にデモが切り替わりました。再実行してください。');run();$('runLog').textContent='成長シナリオ完了（合成ポインター。実機ではありません）\n'+doc.getElementById('resultRank').textContent+' / '+doc.getElementById('resultName').textContent+' / SYNC '+doc.getElementById('resultSync').textContent+'%\nMAX COMBO '+doc.getElementById('resultCombo').textContent+' / NOVA '+doc.getElementById('resultNova').textContent+' / '+doc.getElementById('resultDrive').textContent+'\n'+(worldSnapshot()?.rules==='R4'?doc.getElementById('universeSignature').textContent:doc.getElementById('galaxyResult').textContent)+'\nSCORE '+doc.getElementById('resultScore').textContent+' / '+doc.getElementById('resultDelta').textContent+(duel?'\n'+doc.getElementById('duelOutcome').textContent+' / '+doc.getElementById('duelFinalDelta').textContent+' / OVERTAKES '+overtakes:'')+'\nRESULT visible: '+visible(doc.getElementById('result'))+' / errors: '+errors.length;
  }catch(e){$('runLog').textContent='FAIL: '+e.stack;}finally{watch?.disconnect();$('play').disabled=false;}
 }
 $('play').addEventListener('click',playTrial);
