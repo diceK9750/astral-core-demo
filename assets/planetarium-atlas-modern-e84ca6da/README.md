@@ -6,8 +6,8 @@
 
 - 著者：Johan Meuris / Stellarium Project。作品は [Stellarium constellation art](https://johanmeuris.eu/work/stellarium-constellation-art/)（2005）。
 - 原典：[Stellarium modern、固定コミット e84ca6da77de85dd73093ca8fe98e37c849e6ad3](https://github.com/Stellarium/stellarium/tree/e84ca6da77de85dd73093ca8fe98e37c849e6ad3/skycultures/modern)。`sources/modern-index.json` および `sources/modern-description.md` は当該コミットから取得したもの。
-- 画像：[Free Art License 1.3](https://artlibre.org/licence/lal/en/)。このディレクトリの `originals/` は原図と同じバイト列を保持しており。加工・配布の際は、著者、加工者、変更内容、ライセンス、原図・変更版へのアクセス先を示し、加工版にも同ライセンスまたは互換ライセンスの条件を適用する。原図の場所：[illustrations](https://github.com/Stellarium/stellarium/tree/e84ca6da77de85dd73093ca8fe98e37c849e6ad3/skycultures/modern/illustrations)。
-- 加工者：Codex / OpenAI。原図の黒を透明度に変換し、青色に着色して可逆WebPとして保存。ゲーム内では星図との位置合わせと合成を行う。加工済み画像は `derived/` にあり、[FAL 1.3](https://artlibre.org/licence/lal/en/) で提供する。各ファイルのSHA-256、原図との対応とバイト数は `derived-manifest.json` を参照。これらはゲーム本体に埋め込まれた画像そのもので、`extract-derived.cjs` により新規抽出した。
+- 画像：[Free Art License 1.3](https://artlibre.org/licence/lal/en/)。このディレクトリの `originals/` は原図と同じバイト列を保持しています。加工・配布の際は、著者、加工者、変更内容、ライセンス、原図・変更版へのアクセス先を示し、加工版にも同ライセンスまたは互換ライセンスの条件を適用する。原図の場所：[illustrations](https://github.com/Stellarium/stellarium/tree/e84ca6da77de85dd73093ca8fe98e37c849e6ad3/skycultures/modern/illustrations)。
+- 加工者：Codex / OpenAI。原図の黒を透明度に変換し、青色に着色して可逆WebPとして保存。ゲーム内では星図との位置合わせと合成を行う。加工済み画像は `derived/` にあり、[FAL 1.3](https://artlibre.org/licence/lal/en/) で提供する。各ファイルのSHA-256、原図との対応とバイト数は `derived-manifest.json` を参照。これらはゲーム本体に埋め込まれた画像そのもので。
 - 公式のテキスト・登録点データ：[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)。当データセットは28件・各3点を抽出し、星番号に座標を加えた。
 
 ## 星の座標と精度
