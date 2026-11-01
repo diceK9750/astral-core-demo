@@ -1,0 +1,1212 @@
+{
+  "schema": "astral-core-stellarium-registered-art/1",
+  "artist": "Johan Meuris",
+  "imageLicense": "Free Art License 1.3",
+  "imageLicenseUrl": "https://artlibre.org/licence/lal/en/",
+  "artSourceCommit": "e84ca6da77de85dd73093ca8fe98e37c849e6ad3",
+  "artSource": "https://github.com/Stellarium/stellarium/tree/e84ca6da77de85dd73093ca8fe98e37c849e6ad3/skycultures/modern",
+  "artDataLicense": "CC BY-SA 4.0",
+  "epoch": "J2000",
+  "coordinateNotes": "HYG source values are rounded to 0.0001 hours RA and 0.0001 degrees Dec before RA hours are multiplied by 15; SIMBAD coordinates are sexagesimal ICRS J2000 converted to degrees.",
+  "coordinateReferences": [
+    "https://github.com/alexgraz360/astronomy-glasses/blob/eb12621f6ce58a797b244c67b248240fefb4228a/phase1/data/constellation-art.json",
+    "https://github.com/astronexus/HYG-Database",
+    "https://simbad.cds.unistra.fr/simbad/"
+  ],
+  "constellations": {
+    "orion": {
+      "iau": "Ori",
+      "originalFile": "originals/Ori.png",
+      "sourceFile": "illustrations/orion.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "50126c85e10f8749e7a2dd7167aefef058bd3a4a",
+      "anchors": [
+        {
+          "pos": [
+            59,
+            11
+          ],
+          "hip": 27913,
+          "raDeg": 88.59599999999999,
+          "decDeg": 20.2762,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            329,
+            477
+          ],
+          "hip": 27366,
+          "raDeg": 86.93849999999999,
+          "decDeg": -9.6696,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            421,
+            91
+          ],
+          "hip": 22449,
+          "raDeg": 72.4605,
+          "decDeg": 6.9613,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "lyra": {
+      "iau": "Lyr",
+      "originalFile": "originals/Lyr.png",
+      "sourceFile": "illustrations/lyra.png",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sourceBlobSha1": "a7f45bd892fc3906bb20d1695d9015b473a0a09c",
+      "anchors": [
+        {
+          "pos": [
+            100,
+            96
+          ],
+          "hip": 92791,
+          "raDeg": 283.626,
+          "decDeg": 36.8986,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            157,
+            38
+          ],
+          "hip": 91262,
+          "raDeg": 279.23400000000004,
+          "decDeg": 38.7837,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            139,
+            162
+          ],
+          "hip": 92420,
+          "raDeg": 282.5205,
+          "decDeg": 33.3627,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "canis": {
+      "iau": "CMa",
+      "originalFile": "originals/CMa.png",
+      "sourceFile": "illustrations/canis-major.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "def1e79573b52bf0f99633f147b9d88595b393ca",
+      "anchors": [
+        {
+          "pos": [
+            21,
+            347
+          ],
+          "hip": 35904,
+          "raDeg": 111.024,
+          "decDeg": -29.3031,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            321,
+            24
+          ],
+          "hip": 33160,
+          "raDeg": 103.548,
+          "decDeg": -12.0386,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            318,
+            492
+          ],
+          "hip": 30122,
+          "raDeg": 95.079,
+          "decDeg": -30.0634,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "gemini": {
+      "iau": "Gem",
+      "originalFile": "originals/Gem.png",
+      "sourceFile": "illustrations/gemini.png",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sourceBlobSha1": "ad355cde10b3cd1dd51a87c32d0e5b9b6c0ae05a",
+      "anchors": [
+        {
+          "pos": [
+            14,
+            81
+          ],
+          "hip": 37740,
+          "raDeg": 116.112,
+          "decDeg": 24.398,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            117,
+            252
+          ],
+          "hip": 32362,
+          "raDeg": 101.322,
+          "decDeg": 12.8956,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            249,
+            165
+          ],
+          "hip": 28734,
+          "raDeg": 91.03049999999999,
+          "decDeg": 23.2633,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "crux": {
+      "iau": "Cru",
+      "originalFile": "originals/Cru.png",
+      "sourceFile": "illustrations/crux.png",
+      "sourceSize": [
+        128,
+        128
+      ],
+      "sourceBlobSha1": "01a3bd4fc031bf2f488650160eda2e15cfa94845",
+      "anchors": [
+        {
+          "pos": [
+            112,
+            21
+          ],
+          "hip": 61084,
+          "raDeg": 187.791498375,
+          "decDeg": -57.11321344444445,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+61084",
+          "sourceHms": "12 31 09.95961 -57 06 47.5684"
+        },
+        {
+          "pos": [
+            42,
+            20
+          ],
+          "hip": 62434,
+          "raDeg": 191.93028654166667,
+          "decDeg": -59.688772,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+62434",
+          "sourceHms": "12 47 43.26877 -59 41 19.5792"
+        },
+        {
+          "pos": [
+            21,
+            106
+          ],
+          "hip": 60718,
+          "raDeg": 186.64956341666667,
+          "decDeg": -63.09909286111111,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+60718",
+          "sourceHms": "12 26 35.89522 -63 05 56.7343"
+        }
+      ]
+    },
+    "cygnus": {
+      "iau": "Cyg",
+      "originalFile": "originals/Cyg.png",
+      "sourceFile": "illustrations/cygnus.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "7ed39ccf0913906b5f07848f2db275e6b14b6db8",
+      "anchors": [
+        {
+          "pos": [
+            7,
+            382
+          ],
+          "hip": 107310,
+          "raDeg": 326.0355,
+          "decDeg": 28.7426,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            474,
+            46
+          ],
+          "hip": 94779,
+          "raDeg": 289.275,
+          "decDeg": 53.3685,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            467,
+            453
+          ],
+          "hip": 95947,
+          "raDeg": 292.68,
+          "decDeg": 27.9597,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "aquila": {
+      "iau": "Aql",
+      "originalFile": "originals/Aql.png",
+      "sourceFile": "illustrations/aquila.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "f37cf20e74e6998735abe156aaa4cd0d34796e8b",
+      "anchors": [
+        {
+          "pos": [
+            163,
+            232
+          ],
+          "hip": 97649,
+          "raDeg": 297.69599999999997,
+          "decDeg": 8.8683,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            385,
+            131
+          ],
+          "hip": 93244,
+          "raDeg": 284.9055,
+          "decDeg": 15.0683,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            397,
+            397
+          ],
+          "hip": 93805,
+          "raDeg": 286.563,
+          "decDeg": -4.8826,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "scorpius": {
+      "iau": "Sco",
+      "originalFile": "originals/Sco.png",
+      "sourceFile": "illustrations/scorpius.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "9a50e22661f42088ff7a3beb88a3e94801e2fa45",
+      "anchors": [
+        {
+          "pos": [
+            447,
+            29
+          ],
+          "hip": 78820,
+          "raDeg": 241.35899999999998,
+          "decDeg": -19.8055,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            62,
+            365
+          ],
+          "hip": 85927,
+          "raDeg": 263.4015,
+          "decDeg": -37.1038,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            217,
+            462
+          ],
+          "hip": 82729,
+          "raDeg": 253.64550000000003,
+          "decDeg": -42.3613,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "ursaMajor": {
+      "iau": "UMa",
+      "originalFile": "originals/UMa.png",
+      "sourceFile": "illustrations/ursa-major.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "f9c947591ceb9a8638946230aa73f72f73b2117b",
+      "anchors": [
+        {
+          "pos": [
+            26,
+            75
+          ],
+          "hip": 67301,
+          "raDeg": 206.88600000000002,
+          "decDeg": 49.3133,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            452,
+            272
+          ],
+          "hip": 41704,
+          "raDeg": 127.566,
+          "decDeg": 60.7182,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            258,
+            394
+          ],
+          "hip": 50372,
+          "raDeg": 154.275,
+          "decDeg": 42.9144,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "ursaMinor": {
+      "iau": "UMi",
+      "originalFile": "originals/UMi.png",
+      "sourceFile": "illustrations/ursa-minor.png",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sourceBlobSha1": "947bdf175946f1d490380f0b090b5f33c7aab098",
+      "anchors": [
+        {
+          "pos": [
+            15,
+            20
+          ],
+          "hip": 11767,
+          "raDeg": 37.946999999999996,
+          "decDeg": 89.2641,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            193,
+            51
+          ],
+          "hip": 59504,
+          "raDeg": 183.0495,
+          "decDeg": 77.6162,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            93,
+            209
+          ],
+          "hip": 79822,
+          "raDeg": 244.37699999999998,
+          "decDeg": 75.7553,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "cassiopeia": {
+      "iau": "Cas",
+      "originalFile": "originals/Cas.png",
+      "sourceFile": "illustrations/cassiopeia.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "1bf48d6814cfccbb5e3144b9954686974f558c4b",
+      "anchors": [
+        {
+          "pos": [
+            390,
+            336
+          ],
+          "hip": 8886,
+          "raDeg": 28.599,
+          "decDeg": 63.6701,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            163,
+            156
+          ],
+          "hip": 3179,
+          "raDeg": 10.1265,
+          "decDeg": 56.5373,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            73,
+            243
+          ],
+          "hip": 746,
+          "raDeg": 2.2935000000000003,
+          "decDeg": 59.1498,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "leo": {
+      "iau": "Leo",
+      "originalFile": "originals/Leo.png",
+      "sourceFile": "illustrations/leo.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "80abe97a1af40f10516912c0b1cb522100f2a80c",
+      "anchors": [
+        {
+          "pos": [
+            69,
+            411
+          ],
+          "hip": 57632,
+          "raDeg": 177.2655,
+          "decDeg": 14.5721,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            383,
+            186
+          ],
+          "hip": 49669,
+          "raDeg": 152.0925,
+          "decDeg": 11.9672,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            321,
+            32
+          ],
+          "hip": 47908,
+          "raDeg": 146.46300000000002,
+          "decDeg": 23.7743,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "canisMinor": {
+      "iau": "CMi",
+      "originalFile": "originals/CMi.png",
+      "sourceFile": "illustrations/canis-minor.png",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sourceBlobSha1": "ae8c761c98551bdedacf099421c2c25f205cb762",
+      "anchors": [
+        {
+          "pos": [
+            96,
+            43
+          ],
+          "hip": 37921,
+          "raDeg": 116.56800000000001,
+          "decDeg": 10.7683,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            101,
+            171
+          ],
+          "hip": 37279,
+          "raDeg": 114.825,
+          "decDeg": 5.225,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            184,
+            124
+          ],
+          "hip": 36188,
+          "raDeg": 111.7875,
+          "decDeg": 8.2893,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "bootes": {
+      "iau": "Boo",
+      "originalFile": "originals/Boo.png",
+      "sourceFile": "illustrations/bootes.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "24d1563f2423e865065a8a915b7ced17b3ab217e",
+      "anchors": [
+        {
+          "pos": [
+            225,
+            222
+          ],
+          "hip": 72105,
+          "raDeg": 221.247,
+          "decDeg": 27.0742,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            365,
+            184
+          ],
+          "hip": 71075,
+          "raDeg": 218.01899999999998,
+          "decDeg": 38.3083,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            207,
+            401
+          ],
+          "hip": 67927,
+          "raDeg": 208.671,
+          "decDeg": 18.3977,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "virgo": {
+      "iau": "Vir",
+      "originalFile": "originals/Vir.png",
+      "sourceFile": "illustrations/virgo.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "f2b6b4c10ddcd44a4d760c90f55423d2106eac87",
+      "anchors": [
+        {
+          "pos": [
+            65,
+            389
+          ],
+          "hip": 72220,
+          "raDeg": 221.56199999999998,
+          "decDeg": 1.8929,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            454,
+            57
+          ],
+          "hip": 57380,
+          "raDeg": 176.46450000000002,
+          "decDeg": 6.5294,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            338,
+            382
+          ],
+          "hip": 65474,
+          "raDeg": 201.2985,
+          "decDeg": -11.1613,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "sagittarius": {
+      "iau": "Sgr",
+      "originalFile": "originals/Sgr.png",
+      "sourceFile": "illustrations/sagittarius.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "7b1faeec83a1e33e89d484594cf1ed2a5ff88b0d",
+      "anchors": [
+        {
+          "pos": [
+            96,
+            82
+          ],
+          "hip": 95168,
+          "raDeg": 290.418,
+          "decDeg": -17.8472,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            307,
+            492
+          ],
+          "hip": 95294,
+          "raDeg": 290.805,
+          "decDeg": -44.7998,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            506,
+            100
+          ],
+          "hip": 87072,
+          "raDeg": 266.8905,
+          "decDeg": -27.8308,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "pegasus": {
+      "iau": "Peg",
+      "originalFile": "originals/Peg.png",
+      "sourceFile": "illustrations/pegasus.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "df7a846e4d288e0129b21d419b22ccae724b6392",
+      "anchors": [
+        {
+          "pos": [
+            164,
+            41
+          ],
+          "hip": 107315,
+          "raDeg": 326.046,
+          "decDeg": 9.875,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            47,
+            283
+          ],
+          "hip": 109410,
+          "raDeg": 332.4975,
+          "decDeg": 33.1782,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            409,
+            349
+          ],
+          "hip": 1067,
+          "raDeg": 3.3089999999999997,
+          "decDeg": 15.1836,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "andromeda": {
+      "iau": "And",
+      "originalFile": "originals/And.png",
+      "sourceFile": "illustrations/andromeda.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "0a02e9c500b61d8575bc75e5baf65a1d2cf069ae",
+      "anchors": [
+        {
+          "pos": [
+            198,
+            215
+          ],
+          "hip": 3881,
+          "raDeg": 12.453000000000001,
+          "decDeg": 41.0789,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            337,
+            136
+          ],
+          "hip": 3092,
+          "raDeg": 9.8325,
+          "decDeg": 30.861,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            224,
+            428
+          ],
+          "hip": 9640,
+          "raDeg": 30.974999999999998,
+          "decDeg": 42.3297,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "aries": {
+      "iau": "Ari",
+      "originalFile": "originals/Ari.png",
+      "sourceFile": "illustrations/aries.png",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sourceBlobSha1": "53acad78c20f1cd22fac0b629e5a8244079be4e6",
+      "anchors": [
+        {
+          "pos": [
+            12,
+            130
+          ],
+          "hip": 13209,
+          "raDeg": 42.4965,
+          "decDeg": 27.2605,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            58,
+            206
+          ],
+          "hip": 13914,
+          "raDeg": 44.8035,
+          "decDeg": 21.3404,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            210,
+            47
+          ],
+          "hip": 8832,
+          "raDeg": 28.383000000000003,
+          "decDeg": 19.2939,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "taurus": {
+      "iau": "Tau",
+      "originalFile": "originals/Tau.png",
+      "sourceFile": "illustrations/taurus.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "323b0b5e9578a06cdec4024d6912705775b8a9f9",
+      "anchors": [
+        {
+          "pos": [
+            13,
+            92
+          ],
+          "hip": 26451,
+          "raDeg": 84.411,
+          "decDeg": 21.1425,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            399,
+            438
+          ],
+          "hip": 15900,
+          "raDeg": 51.204,
+          "decDeg": 9.0289,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            382,
+            192
+          ],
+          "hip": 17999,
+          "raDeg": 57.7185,
+          "decDeg": 23.9615,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "auriga": {
+      "iau": "Aur",
+      "originalFile": "originals/Aur.png",
+      "sourceFile": "illustrations/auriga.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "7f76fd99f07f5c8dd9e8ed8637146ed8b54efb4e",
+      "anchors": [
+        {
+          "pos": [
+            196,
+            189
+          ],
+          "hip": 28380,
+          "raDeg": 89.93029216666667,
+          "decDeg": 37.21258463888889,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+28380",
+          "sourceHms": "05 59 43.27012 +37 12 45.3047"
+        },
+        {
+          "pos": [
+            419,
+            208
+          ],
+          "hip": 24608,
+          "raDeg": 79.17232795833334,
+          "decDeg": 45.997991472222225,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+24608",
+          "sourceHms": "05 16 41.35871 +45 59 52.7693"
+        },
+        {
+          "pos": [
+            290,
+            423
+          ],
+          "hip": 23015,
+          "raDeg": 74.24841676022209,
+          "decDeg": 33.16609377207722,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+23015",
+          "sourceHms": "04 56 59.6200224533 +33 09 57.937579478"
+        }
+      ]
+    },
+    "perseus": {
+      "iau": "Per",
+      "originalFile": "originals/Per.png",
+      "sourceFile": "illustrations/perseus.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "4f41a0739af4c638dc32647ad2519788ee0bd60f",
+      "anchors": [
+        {
+          "pos": [
+            164,
+            323
+          ],
+          "hip": 18532,
+          "raDeg": 59.463,
+          "decDeg": 40.0102,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            299,
+            175
+          ],
+          "hip": 15863,
+          "raDeg": 51.081,
+          "decDeg": 49.8612,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            385,
+            386
+          ],
+          "hip": 13254,
+          "raDeg": 42.6465,
+          "decDeg": 38.3186,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "draco": {
+      "iau": "Dra",
+      "originalFile": "originals/Dra.png",
+      "sourceFile": "illustrations/draco.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "50bc1471ebf7f6d819160b97c29518f74352a60b",
+      "anchors": [
+        {
+          "pos": [
+            13,
+            411
+          ],
+          "hip": 56211,
+          "raDeg": 172.8509236429992,
+          "decDeg": 69.33107573011193,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+56211",
+          "sourceHms": "11 31 24.2216743198 +69 19 51.872628403"
+        },
+        {
+          "pos": [
+            361,
+            154
+          ],
+          "hip": 85670,
+          "raDeg": 262.60817373291667,
+          "decDeg": 52.30138870861111,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+85670",
+          "sourceHms": "17 30 25.9616959 +52 18 04.999351"
+        },
+        {
+          "pos": [
+            449,
+            429
+          ],
+          "hip": 97433,
+          "raDeg": 297.04312691249004,
+          "decDeg": 70.26793029824,
+          "coordinateSource": "SIMBAD-J2000",
+          "source": "https://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+97433",
+          "sourceHms": "19 48 10.3504589976 +70 16 04.549073664"
+        }
+      ]
+    },
+    "cancer": {
+      "iau": "Cnc",
+      "originalFile": "originals/Cnc.png",
+      "sourceFile": "illustrations/cancer.png",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sourceBlobSha1": "c8a7b7cd2ff4fe151bed3e5e1cf73f7add659d9f",
+      "anchors": [
+        {
+          "pos": [
+            29,
+            166
+          ],
+          "hip": 44066,
+          "raDeg": 134.622,
+          "decDeg": 11.8577,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            101,
+            255
+          ],
+          "hip": 40526,
+          "raDeg": 124.1295,
+          "decDeg": 9.1855,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            206,
+            91
+          ],
+          "hip": 40843,
+          "raDeg": 125.016,
+          "decDeg": 27.2177,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "libra": {
+      "iau": "Lib",
+      "originalFile": "originals/Lib.png",
+      "sourceFile": "illustrations/libra.png",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sourceBlobSha1": "93ff88591aba8e84d32548df3e3ff0ef4491dbac",
+      "anchors": [
+        {
+          "pos": [
+            41,
+            27
+          ],
+          "hip": 74785,
+          "raDeg": 229.251,
+          "decDeg": -9.3829,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            58,
+            170
+          ],
+          "hip": 77853,
+          "raDeg": 238.4565,
+          "decDeg": -16.7293,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            224,
+            107
+          ],
+          "hip": 73714,
+          "raDeg": 226.017,
+          "decDeg": -25.282,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "capricornus": {
+      "iau": "Cap",
+      "originalFile": "originals/Cap.png",
+      "sourceFile": "illustrations/capricornus.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "45e6711345a73dcc3d468dffe0accc88b26ee1fa",
+      "anchors": [
+        {
+          "pos": [
+            15,
+            436
+          ],
+          "hip": 107556,
+          "raDeg": 326.76,
+          "decDeg": -16.1273,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            403,
+            7
+          ],
+          "hip": 100064,
+          "raDeg": 304.51349999999996,
+          "decDeg": -12.5449,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            460,
+            438
+          ],
+          "hip": 102978,
+          "raDeg": 312.95550000000003,
+          "decDeg": -26.9191,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "aquarius": {
+      "iau": "Aqr",
+      "originalFile": "originals/Aqr.png",
+      "sourceFile": "illustrations/aquarius.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "025dc016fb0d29748e99aa0e7f576b29cb176a78",
+      "anchors": [
+        {
+          "pos": [
+            144,
+            464
+          ],
+          "hip": 115438,
+          "raDeg": 350.742,
+          "decDeg": -20.1006,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            179,
+            98
+          ],
+          "hip": 109074,
+          "raDeg": 331.44599999999997,
+          "decDeg": -0.3199,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            465,
+            49
+          ],
+          "hip": 102618,
+          "raDeg": 311.919,
+          "decDeg": -9.4958,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    },
+    "pisces": {
+      "iau": "Psc",
+      "originalFile": "originals/Psc.png",
+      "sourceFile": "illustrations/pisces.png",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sourceBlobSha1": "8570c224a797b4a92ca405e110f531ccac85c7f5",
+      "anchors": [
+        {
+          "pos": [
+            24,
+            104
+          ],
+          "hip": 4889,
+          "raDeg": 15.704999999999998,
+          "decDeg": 31.8043,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            111,
+            489
+          ],
+          "hip": 9487,
+          "raDeg": 30.5115,
+          "decDeg": 2.7638,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        },
+        {
+          "pos": [
+            481,
+            155
+          ],
+          "hip": 114971,
+          "raDeg": 349.29150000000004,
+          "decDeg": 3.2823,
+          "coordinateSource": "HYG-v4.1-rounded-J2000"
+        }
+      ]
+    }
+  }
+}

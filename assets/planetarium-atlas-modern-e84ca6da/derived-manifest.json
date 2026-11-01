@@ -1,0 +1,263 @@
+{
+  "source": "index.html / registeredArtwork data URIs",
+  "transform": "Codex / OpenAI: removed black background as alpha, colorized pale blue, encoded lossless WebP; at runtime registered and composited under stars.",
+  "license": "Free Art License 1.3",
+  "licenseUrl": "https://artlibre.org/licence/lal/en/",
+  "artist": "Johan Meuris / Stellarium Project",
+  "originals": "originals/",
+  "derivatives": "derived/",
+  "files": [
+    {
+      "key": "orion",
+      "iau": "Ori",
+      "original": "originals/Ori.png",
+      "originalGitBlobSha1": "50126c85e10f8749e7a2dd7167aefef058bd3a4a",
+      "derived": "derived/orion.webp",
+      "sha256": "454f3ea6866667333a596dd9fce97fa180529e5ff8a990ab76636d95278c6b32",
+      "bytes": 37780
+    },
+    {
+      "key": "lyra",
+      "iau": "Lyr",
+      "original": "originals/Lyr.png",
+      "originalGitBlobSha1": "a7f45bd892fc3906bb20d1695d9015b473a0a09c",
+      "derived": "derived/lyra.webp",
+      "sha256": "a26d0b039b861ca8d8c0ed3b81df6e7157b121fbdee8e8238c489f180c25cd66",
+      "bytes": 15756
+    },
+    {
+      "key": "canis",
+      "iau": "CMa",
+      "original": "originals/CMa.png",
+      "originalGitBlobSha1": "def1e79573b52bf0f99633f147b9d88595b393ca",
+      "derived": "derived/canis.webp",
+      "sha256": "5b5cf9122e4bc35b50469c0a4c4dc838c1f850e535fbed99366dfffe60536253",
+      "bytes": 27646
+    },
+    {
+      "key": "gemini",
+      "iau": "Gem",
+      "original": "originals/Gem.png",
+      "originalGitBlobSha1": "ad355cde10b3cd1dd51a87c32d0e5b9b6c0ae05a",
+      "derived": "derived/gemini.webp",
+      "sha256": "f6c83420d8beb5e7dcc75a1a3f18833220e4887e2346b57abbd75b2e65a937fa",
+      "bytes": 19228
+    },
+    {
+      "key": "crux",
+      "iau": "Cru",
+      "original": "originals/Cru.png",
+      "originalGitBlobSha1": "01a3bd4fc031bf2f488650160eda2e15cfa94845",
+      "derived": "derived/crux.webp",
+      "sha256": "84ca335f9561e263fe6a3b47db46d311fb1b3b1e9460919c9e53fed2979a4107",
+      "bytes": 5852
+    },
+    {
+      "key": "cygnus",
+      "iau": "Cyg",
+      "original": "originals/Cyg.png",
+      "originalGitBlobSha1": "7ed39ccf0913906b5f07848f2db275e6b14b6db8",
+      "derived": "derived/cygnus.webp",
+      "sha256": "81967437ca29a462fb9f5107b62c7a4cbc7bedf1224809048879898265e6cf3b",
+      "bytes": 28996
+    },
+    {
+      "key": "aquila",
+      "iau": "Aql",
+      "original": "originals/Aql.png",
+      "originalGitBlobSha1": "f37cf20e74e6998735abe156aaa4cd0d34796e8b",
+      "derived": "derived/aquila.webp",
+      "sha256": "dc1ea03944845c20ffc4f34e84fbcf5a3b829df67abbc92321d9c366d32729bd",
+      "bytes": 38498
+    },
+    {
+      "key": "scorpius",
+      "iau": "Sco",
+      "original": "originals/Sco.png",
+      "originalGitBlobSha1": "9a50e22661f42088ff7a3beb88a3e94801e2fa45",
+      "derived": "derived/scorpius.webp",
+      "sha256": "c592db31646170a23d62a39d5560ad1c0f70ebeb091ccf321259ce449eef1897",
+      "bytes": 42254
+    },
+    {
+      "key": "ursaMajor",
+      "iau": "UMa",
+      "original": "originals/UMa.png",
+      "originalGitBlobSha1": "f9c947591ceb9a8638946230aa73f72f73b2117b",
+      "derived": "derived/ursaMajor.webp",
+      "sha256": "f2e8568a3c37ba800a400c48b2a43cb68914dfa6c398c2363e5246c967c9a098",
+      "bytes": 26578
+    },
+    {
+      "key": "ursaMinor",
+      "iau": "UMi",
+      "original": "originals/UMi.png",
+      "originalGitBlobSha1": "947bdf175946f1d490380f0b090b5f33c7aab098",
+      "derived": "derived/ursaMinor.webp",
+      "sha256": "825c6e981485d828a1c05600f84c7600be4861c7b8f2a9b5e2be7431bde24b34",
+      "bytes": 10730
+    },
+    {
+      "key": "cassiopeia",
+      "iau": "Cas",
+      "original": "originals/Cas.png",
+      "originalGitBlobSha1": "1bf48d6814cfccbb5e3144b9954686974f558c4b",
+      "derived": "derived/cassiopeia.webp",
+      "sha256": "d8c4cc2a88f6f27c228548a78b563c3b008565846f3f2d19f0c730aea167b8a7",
+      "bytes": 44856
+    },
+    {
+      "key": "leo",
+      "iau": "Leo",
+      "original": "originals/Leo.png",
+      "originalGitBlobSha1": "80abe97a1af40f10516912c0b1cb522100f2a80c",
+      "derived": "derived/leo.webp",
+      "sha256": "abb4e4d3f981ec71432941f5f6b29e58398dfa5b567ca4a49806911a6e0295d1",
+      "bytes": 37550
+    },
+    {
+      "key": "canisMinor",
+      "iau": "CMi",
+      "original": "originals/CMi.png",
+      "originalGitBlobSha1": "ae8c761c98551bdedacf099421c2c25f205cb762",
+      "derived": "derived/canisMinor.webp",
+      "sha256": "73ab7ce0f58655cc59351db92d36c14003998306dc0112fe20e582e5aa5bfa4c",
+      "bytes": 13108
+    },
+    {
+      "key": "bootes",
+      "iau": "Boo",
+      "original": "originals/Boo.png",
+      "originalGitBlobSha1": "24d1563f2423e865065a8a915b7ced17b3ab217e",
+      "derived": "derived/bootes.webp",
+      "sha256": "7c75c6d381f8045227fcdeaae617fa6e8f9c4e14b82ab8932e0b0850e65326ec",
+      "bytes": 36120
+    },
+    {
+      "key": "virgo",
+      "iau": "Vir",
+      "original": "originals/Vir.png",
+      "originalGitBlobSha1": "f2b6b4c10ddcd44a4d760c90f55423d2106eac87",
+      "derived": "derived/virgo.webp",
+      "sha256": "14bc96ece8d2d14ee629c360bb33fe69dd05df907d38a253cfca64e245ac5773",
+      "bytes": 42398
+    },
+    {
+      "key": "sagittarius",
+      "iau": "Sgr",
+      "original": "originals/Sgr.png",
+      "originalGitBlobSha1": "7b1faeec83a1e33e89d484594cf1ed2a5ff88b0d",
+      "derived": "derived/sagittarius.webp",
+      "sha256": "b959853a655762f76f591058a44d7ae4ec85075f09e770703b44a8f03b4b3b45",
+      "bytes": 36080
+    },
+    {
+      "key": "pegasus",
+      "iau": "Peg",
+      "original": "originals/Peg.png",
+      "originalGitBlobSha1": "df7a846e4d288e0129b21d419b22ccae724b6392",
+      "derived": "derived/pegasus.webp",
+      "sha256": "cfa4d3c2abbee0bfec76e795c4b35aef7ad4bac57a281bdfacb5989d82326e91",
+      "bytes": 35042
+    },
+    {
+      "key": "andromeda",
+      "iau": "And",
+      "original": "originals/And.png",
+      "originalGitBlobSha1": "0a02e9c500b61d8575bc75e5baf65a1d2cf069ae",
+      "derived": "derived/andromeda.webp",
+      "sha256": "865b991bc6fe05260d47297e59fdf8ee8857c3f4f2f5fd3956fd30f9d641320e",
+      "bytes": 31280
+    },
+    {
+      "key": "aries",
+      "iau": "Ari",
+      "original": "originals/Ari.png",
+      "originalGitBlobSha1": "53acad78c20f1cd22fac0b629e5a8244079be4e6",
+      "derived": "derived/aries.webp",
+      "sha256": "b48dd758d170ba3ddde6c33f01a02421db3ed5e00e65f60478f860072f6a4155",
+      "bytes": 14930
+    },
+    {
+      "key": "taurus",
+      "iau": "Tau",
+      "original": "originals/Tau.png",
+      "originalGitBlobSha1": "323b0b5e9578a06cdec4024d6912705775b8a9f9",
+      "derived": "derived/taurus.webp",
+      "sha256": "5a258a7be24a1fcd79cd57f093d67b8f0f4a9ebb903fad9e4c8fd47df2eec671",
+      "bytes": 33282
+    },
+    {
+      "key": "auriga",
+      "iau": "Aur",
+      "original": "originals/Aur.png",
+      "originalGitBlobSha1": "7f76fd99f07f5c8dd9e8ed8637146ed8b54efb4e",
+      "derived": "derived/auriga.webp",
+      "sha256": "853a116ee3e2797fd07ec73c7bdead44187b41a1e03da95243f6c9fdfc12d8c2",
+      "bytes": 59376
+    },
+    {
+      "key": "perseus",
+      "iau": "Per",
+      "original": "originals/Per.png",
+      "originalGitBlobSha1": "4f41a0739af4c638dc32647ad2519788ee0bd60f",
+      "derived": "derived/perseus.webp",
+      "sha256": "9fc56d42cb6eb8ce7926d1ffb78009596c18984142562641c23cb36a770cd284",
+      "bytes": 54488
+    },
+    {
+      "key": "draco",
+      "iau": "Dra",
+      "original": "originals/Dra.png",
+      "originalGitBlobSha1": "50bc1471ebf7f6d819160b97c29518f74352a60b",
+      "derived": "derived/draco.webp",
+      "sha256": "58b8590e77fed4705111ea8df084af4b5c6e9f772dd1614307b79b9ed85eb93a",
+      "bytes": 44458
+    },
+    {
+      "key": "cancer",
+      "iau": "Cnc",
+      "original": "originals/Cnc.png",
+      "originalGitBlobSha1": "c8a7b7cd2ff4fe151bed3e5e1cf73f7add659d9f",
+      "derived": "derived/cancer.webp",
+      "sha256": "fd48855cb52f36c90ef05e92da072ff90e06f867e2917503ccfb5d868f0a8d13",
+      "bytes": 14142
+    },
+    {
+      "key": "libra",
+      "iau": "Lib",
+      "original": "originals/Lib.png",
+      "originalGitBlobSha1": "93ff88591aba8e84d32548df3e3ff0ef4491dbac",
+      "derived": "derived/libra.webp",
+      "sha256": "699a90db78a05979e7156fe420f4449fded0ab0c71fdb01424ab72ae83812a5c",
+      "bytes": 11556
+    },
+    {
+      "key": "capricornus",
+      "iau": "Cap",
+      "original": "originals/Cap.png",
+      "originalGitBlobSha1": "45e6711345a73dcc3d468dffe0accc88b26ee1fa",
+      "derived": "derived/capricornus.webp",
+      "sha256": "88e5e0f8a135a711ceee513f71d2fd2896b7a04fcd8675da6a2e84ba667f7ac7",
+      "bytes": 40494
+    },
+    {
+      "key": "aquarius",
+      "iau": "Aqr",
+      "original": "originals/Aqr.png",
+      "originalGitBlobSha1": "025dc016fb0d29748e99aa0e7f576b29cb176a78",
+      "derived": "derived/aquarius.webp",
+      "sha256": "0ff7bbe157ff5b0acade7a454dcee6456dcd4980928269d3fc9c279557309b6f",
+      "bytes": 47164
+    },
+    {
+      "key": "pisces",
+      "iau": "Psc",
+      "original": "originals/Psc.png",
+      "originalGitBlobSha1": "8570c224a797b4a92ca405e110f531ccac85c7f5",
+      "derived": "derived/pisces.webp",
+      "sha256": "aa4434b4b5990a6ffcbc34c3229164feb2196315d443446504fec38df6494ae8",
+      "bytes": 23772
+    }
+  ]
+}
