@@ -1,27 +1,29 @@
 {
-  "release": "planetarium-registered-20261101",
+  "release": "c5-summon-20261112",
   "rules": "R4",
   "pace": "flow5",
   "supply": "relay1",
   "power": "surge1",
-  "constellation": "c2",
-  "gver": "4f5s1",
-  "sourceSHA256": "f079cb4e9cfdc1e6487e28b336dc80336766c19a203fb8917801fb817c5c4b19",
+  "constellation": "c5",
+  "gver": "4f5s1c5",
+  "sourceSHA256": "c94167db1e7b51e615030b11c4461ccfb7ccf249b833f482dcd191b4235d80d6",
   "artCredits": "credits.html",
   "highlights": [
-    "All 28 constellation illustrations are aligned with referenced stellar anchor points.",
-    "The star-only view expands the chart, and Capricornus includes five additional reference stars.",
-    "Artwork authorship, licences, original files and derivatives are available independently."
+    "CORE grows through nine stages, from SEED to COSMOS.",
+    "AMPLIFY enhances star score and CORE growth; OVER DRIVE pulls stars inward and pauses the countdown.",
+    "Completed constellations can be summoned in acquisition order, once per constellation per play.",
+    "Legacy C4 challenge and Ghost URLs retain their rules; C4 and C5 bests remain separate."
   ],
   "verification": {
-    "localSuites": 49,
-    "localChecks": 5981,
-    "existingPublicTreeSuites": 14,
-    "existingPublicTreeChecks": 872,
-    "browser": "Isolated Edge: desktop and 320 CSS-pixel views, actual constellation completions and result screen before the credits link was added.",
+    "localSuites": 69,
+    "localChecks": 6489,
+    "failedSuites": 0,
+    "source": "Local VM, source and model tests, run against an isolated copy; see accompanying project records.",
+    "browser": "Before publication: isolated browser tested summon pause, A/N input, resume and skip, singularity and a synthetic C4 Ghost duel.",
+    "audioContextAndAssistiveClick": "Simulated environment; physical devices and assistive technologies were not verified.",
     "physicalTouch": false,
     "audioQuality": false,
     "deviceFPS": false
   },
-  "storage": "Existing discovery and challenge records remain supported. The isolated test origin was used for gameplay; the normal and public origins were not used for test play."
+  "storage": "Existing discovery records and legacy C4 records are preserved by supported compatibility paths. Browser storage may be unavailable and non-cooperative cross-tab operations have limitations."
 }
